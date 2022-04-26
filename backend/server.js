@@ -5,6 +5,8 @@ import { config as dotenvConfig } from 'dotenv';
 import { errorHandler } from './middleware/errorMiddleware.js';
 import { connectDB } from './config/db.js';
 
+import { protect } from './middleware/authMiddleware.js';
+
 dotenvConfig();
 
 connectDB();
@@ -22,7 +24,9 @@ app.listen(port, () =>
 });
 
 import taskRoutes from './routes/taskRoutes.js';
+import userRoutes from './routes/userRoutes.js';
 
-app.use('/api/tasks', taskRoutes);
+app.use('/api/tasks', protect, taskRoutes);
+app.use('/api/users', userRoutes);
 
 app.use(errorHandler);
