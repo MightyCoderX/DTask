@@ -1,4 +1,5 @@
 import express from 'express';
+import cors from 'cors';
 import colors from 'colors';
 import { config as dotenvConfig } from 'dotenv';
 
@@ -17,6 +18,9 @@ const app = express();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(cors({
+    origin: 'http://localhost:3000'
+}));
 
 app.listen(port, () =>
 {

@@ -1,0 +1,54 @@
+<script setup>
+    import Form from '@/components/form/Form.vue';
+    import FormField from '@/components/form/FormField.vue';
+    import Button from '@/components/Button.vue';
+</script>
+
+<template>
+    <div class="login">
+        <Form action="//localhost:5000/api/users/login" method="post">
+            <h1>Login</h1>
+
+            <FormField label="Email" :input-options="{
+                type: 'email',
+                name: 'email',
+                autocomplete: 'email',
+                required: true
+            }" />
+
+            <FormField label="Password" :input-options="{
+                type: 'password',
+                name: 'password',
+                autocomplete: 'current-password',
+                required: true
+            }"/>
+
+            <Button type="submit" label="Login" />
+        </Form>
+    </div>
+</template>
+
+<style>
+    .login
+    {
+        padding: 1rem;
+        display: grid;
+        place-items: center;
+    }
+
+    .login form
+    {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-around;
+        gap: 2rem;
+    }
+
+    .login form .field
+    {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5em;
+    }
+</style>
