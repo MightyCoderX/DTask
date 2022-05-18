@@ -75,7 +75,8 @@
                     spanText.removeEventListener('keydown', pressEnter);
                 }
 
-                spanText.addEventListener('keydown', pressEnter);
+                spanText.addEventListener('keydown', pressEnter, { once: true });
+                spanText.addEventListener('blur', edited, { once: true });
             },
             del(e)
             {

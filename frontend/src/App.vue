@@ -1,6 +1,5 @@
 <script setup>
     import Header from '@/components/Header.vue';
-import LoadSpinner from './components/LoadSpinner.vue';
 </script>
 
 <template>

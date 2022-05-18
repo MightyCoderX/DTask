@@ -60,7 +60,7 @@ router.beforeEach((to, from, next) =>
 {
     if(to.matched.some(record => record.meta.protected))
     {
-        if(!store.auth.authenticated())
+        if(!store.auth.authenticated && !localStorage.getItem('token'))
         {
             next({ name: 'Login' });
 

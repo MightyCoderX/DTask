@@ -2,11 +2,13 @@ import { reactive } from 'vue';
 
 const auth = {
     token: '',
+    authenticated: !!localStorage.getItem('token'),
     setToken(value)
     {
         if(!value) return;
         this.token = value;
         localStorage.setItem('token', value);
+        this.authenticated = true;
     },
     getToken()
     {
@@ -17,10 +19,7 @@ const auth = {
     removeToken()
     {
         localStorage.removeItem('token');
-    },
-    authenticated()
-    {
-        return !!this.getToken();
+        this.authenticated = false;
     }
 }
 
@@ -30,15 +29,17 @@ const tasks = {
     completed: [],
     update()
     {
+        this.tasks.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
         this.notCompleted = this.tasks.filter(task => !task.completed);
         this.completed = this.tasks.filter(task => task.completed);
     },
-    create(data)
+    create(taskData)
     {
+        if(!taskData.text.trim()) return;
         fetch('//localhost:5000/api/tasks', {
             method: 'POST',
             body: new URLSearchParams({
-                text: data.text.trim()
+                text: taskData.text.trim()
             }),
             headers:
             {
@@ -49,6 +50,8 @@ const tasks = {
         .then(data =>
         {
             console.log(data);
+
+            this.tasks.push(data);
             
             this.update();
         })
@@ -57,8 +60,6 @@ const tasks = {
     async getAll()
     {
         this.update();
-
-        if(this.tasks.length) return this.tasks;
 
         try
         {
@@ -96,8 +97,9 @@ const tasks = {
         .then(res => res.json())
         .then(data =>
         {
-            console.log(data);
-            this.tasks.find(t => t.id == task.id).completed = data.completed;
+            const targetTask = this.tasks.find(t => t._id == task._id);
+
+            targetTask.completed = data.completed;
             this.update();
         });
     },
@@ -113,6 +115,7 @@ const tasks = {
         .then(res => res.json())
         .then(data =>
         {
+            this.tasks = this.tasks.filter(t => t._id !== task._id);
             console.log(data);
             this.update();
         });

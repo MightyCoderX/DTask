@@ -6,7 +6,7 @@
         <ul v-else class="list">
             <Task v-for="task of tasksStore.notCompleted" :key="task._id" :task="task"/>
         </ul>
-        
+
         <div class="new-task">
             <FormField ref="newTaskInput" label="Text" :input-options="{
                 type: 'text',
@@ -14,7 +14,8 @@
                 name: 'text',
                 required: true
             }" v-model="text" @keyup.enter="createTask"/>
-            <PrimaryButton class="new" type="submit" label="New" @click.left="createTask"/>
+            
+            <Icon class="add-task" @click="createTask" name="add" />
         </div>
 
         <h2>Completed</h2>
@@ -28,14 +29,15 @@
 </template>
 
 <script>
-    import store from '../../../store';
-    import Task from './Task.vue';
     import FormField from '../../../components/form/FormField.vue';
-    import LoadSpinner from '../../../components/LoadSpinner.vue';
-    import PrimaryButton from '../../../components/PrimaryButton.vue';
+import Icon from '../../../components/Icon.vue';
+import LoadSpinner from '../../../components/LoadSpinner.vue';
+import PrimaryButton from '../../../components/PrimaryButton.vue';
+import store from '../../../store';
+import Task from './Task.vue';
 
     export default {
-        components: { Task, PrimaryButton, FormField, LoadSpinner },
+        components: { Task, PrimaryButton, FormField, LoadSpinner, Icon },
         data: () => ({
             tasksStore: store.tasks,
             text: ''
@@ -44,7 +46,6 @@
         {
             createTask()
             {
-                console.log(this.text);
                 this.tasksStore.create({text: this.text});
 
                 this.$refs.newTaskInput.value = '';
@@ -66,6 +67,7 @@
         justify-items: center;
         align-items: center;
         gap: 2rem;
+        padding-bottom: 5rem !important;
     }
 
     .tasks .title
@@ -85,9 +87,9 @@
     .new-task
     {
         display: flex;
-        gap: 1rem;
         align-items: center;
         width: 100%;
+        gap: 0.5rem;
     }
 
     .new-task .form-field
@@ -95,8 +97,25 @@
         width: 100%;
     }
 
-    .new-task .btn
+    .new-task .form-field .input
     {
-        font-size: 1rem;
+        color: red;
+    }
+
+    .new-task .add-task
+    {
+        font-size: 2rem;
+        background-color: var(--accent-color);
+        padding: 0.2rem;
+        border-radius: 100%;
+        cursor: pointer;
+        opacity: 0.7;
+        transition: 0.3s opacity;
+    }
+    
+    .new-task .add-task:hover,
+    .new-task .add-task:focus-visible
+    {
+        opacity: 1;
     }
 </style>

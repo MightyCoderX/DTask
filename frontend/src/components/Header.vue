@@ -2,9 +2,9 @@
     <header>
         <h1 class="logo">DTask</h1>
         <nav>
-            <RouterLink :to="{ name: 'Dashboard' }" v-if="isAuthed">Dashboard</RouterLink>
-            <RouterLink :to="{ name: 'Login'     }" v-if="!isAuthed">Login</RouterLink>
-            <RouterLink :to="{ name: 'Register'  }" v-if="!isAuthed">Register</RouterLink>
+            <RouterLink :to="{ name: 'Dashboard' }" v-if="authStore.authenticated">Dashboard</RouterLink>
+            <RouterLink :to="{ name: 'Login'     }" v-if="!authStore.authenticated">Login</RouterLink>
+            <RouterLink :to="{ name: 'Register'  }" v-if="!authStore.authenticated">Register</RouterLink>
         </nav>
     </header>
 </template>
@@ -13,9 +13,11 @@
     import store from '../store';
 
     export default {
-        computed:
+        data()
         {
-            isAuthed: () => store.auth.authenticated()
+            return {
+                authStore: store.auth
+            }
         }
     }
 </script>

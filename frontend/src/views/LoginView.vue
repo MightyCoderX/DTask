@@ -1,7 +1,7 @@
 <script setup>
     import Form from '@/components/form/Form.vue';
     import FormField from '@/components/form/FormField.vue';
-    import Button from '@/components/Button.vue';
+    import PrimaryButton from '@/components/PrimaryButton.vue';
 </script>
 
 <template>
@@ -23,7 +23,7 @@
                 required: true
             }"/>
 
-            <Button type="submit" label="Login" />
+            <PrimaryButton type="submit" label="Login" />
         </Form>
     </div>
 </template>
@@ -32,7 +32,7 @@
     import store from '../store';
 
     export default {
-        components: { Form, FormField },
+        components: { Form, FormField, PrimaryButton },
         methods:
         {
             login(data)

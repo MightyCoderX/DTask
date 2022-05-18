@@ -13,10 +13,6 @@
             inputOptions: Object,
             modelValue: String
         },
-        mounted()
-        {
-            console.log(this.$attrs.onKeyup);
-        },
         computed:
         {
             value:

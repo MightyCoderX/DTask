@@ -14,6 +14,7 @@
     {
         display: grid;
         grid-template-columns: 20% 1fr;
+        max-height: 100%;
     }
 
     .dashboard > .view
