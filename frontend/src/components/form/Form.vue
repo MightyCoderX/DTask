@@ -1,18 +1,19 @@
 <template>
-    <form class="form" :="$props" @submit="submit">
+    <form class="form" :="$props" @submit.prevent="submit">
         <slot></slot>
     </form>
 </template>
 
 <script>
-    import store from '../../store.js';
-
     export default {
-        methods: {
+        props: 
+        {
+            onResponse: Function
+        },
+        methods:
+        {
             submit(e)
             {
-                e.preventDefault();
-
                 const data = new URLSearchParams(new FormData(e.target));
 
                 fetch(e.target.action, { 
@@ -22,8 +23,7 @@
                 .then(res => res.json())
                 .then(data =>
                 {
-                    store.auth.setToken(data.token);
-                    this.$router.push({ name: 'Dashboard' });
+                    this.onResponse(data);
                 })
                 .catch(console.error);
             }

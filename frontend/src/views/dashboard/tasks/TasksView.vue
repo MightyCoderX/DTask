@@ -1,12 +1,28 @@
 <template>
     <div class="tasks">
         <h1 class="title">Tasks</h1>
-        <ul class="list">
-            <Task v-for="task of tasks.filter(task => !task.completed)" :key="task._id" :task="task"/>
-            <Button class="new" label="New" />
+
+        <LoadSpinner class="load-spinner" v-if="!tasksStore.notCompleted.length" />
+        <ul v-else class="list">
+            <Task v-for="task of tasksStore.notCompleted" :key="task._id" :task="task"/>
         </ul>
-        <ul class="list completed">
-            <Task v-for="task of tasks.filter(task => task.completed)" :key="task._id" :task="task"/>
+        
+        <div class="new-task">
+            <FormField ref="newTaskInput" label="Text" :input-options="{
+                type: 'text',
+                autocomplete: 'off',
+                name: 'text',
+                required: true
+            }" v-model="text" @keyup.enter="createTask"/>
+            <PrimaryButton class="new" type="submit" label="New" @click.left="createTask"/>
+        </div>
+
+        <h2>Completed</h2>
+        <p v-if="!tasksStore.completed.length">
+            No Completed Tasks
+        </p>
+        <ul v-else class="list completed">
+            <Task v-for="task of tasksStore.completed" :key="task._id" :task="task"/>
         </ul>
     </div>
 </template>
@@ -14,30 +30,29 @@
 <script>
     import store from '../../../store';
     import Task from './Task.vue';
-    import Button from '../../../components/Button.vue';
+    import FormField from '../../../components/form/FormField.vue';
+    import LoadSpinner from '../../../components/LoadSpinner.vue';
+    import PrimaryButton from '../../../components/PrimaryButton.vue';
 
     export default {
-        components: { Task, Button },
-        data()
+        components: { Task, PrimaryButton, FormField, LoadSpinner },
+        data: () => ({
+            tasksStore: store.tasks,
+            text: ''
+        }),
+        methods:
         {
-            return {
-                tasks: []
+            createTask()
+            {
+                console.log(this.text);
+                this.tasksStore.create({text: this.text});
+
+                this.$refs.newTaskInput.value = '';
             }
         },
-        created()
+        mounted()
         {
-            fetch('//localhost:5000/api/tasks', {
-                headers: {
-                    'Authorization': 'Bearer ' + store.auth.getToken()
-                }
-            })
-            .then(res => res.json())
-            .then(data =>
-            {
-                console.log(data);
-                this.tasks = data;
-            })
-            .catch(console.error);
+            this.tasksStore.getAll();
         }
     }
 </script>
@@ -45,9 +60,12 @@
 <style scoped>
     .tasks
     {
-        display: flex;
-        flex-direction: column;
+        display: grid;
+        grid-template-columns: 50vw;
+        justify-content: center;
+        justify-items: center;
         align-items: center;
+        gap: 2rem;
     }
 
     .tasks .title
@@ -61,11 +79,24 @@
         flex-direction: column;
         align-items: center;
         gap: 1em;
-        width: 50vw;
+        width: 100%;
+    }
+    
+    .new-task
+    {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+        width: 100%;
     }
 
-    .tasks .btn
+    .new-task .form-field
     {
-        align-self: flex-start;
+        width: 100%;
+    }
+
+    .new-task .btn
+    {
+        font-size: 1rem;
     }
 </style>

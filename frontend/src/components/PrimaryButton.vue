@@ -29,6 +29,4 @@
     {
         background-color: #0000ff22;
     }
-
-
 </style>

@@ -9,18 +9,19 @@
             <span class="label">Stats</span>
         </RouterLink>
         <!-- <RouterLink :to="{ name: 'Stats' }">Stats</RouterLink> -->
-        <Button label="Logout" @click="logout" />
+        <PrimaryButton label="Logout" @click="logout" />
     </aside>
 </template>
 
 <script>
     import store from '../../store.js';
     import Icon from '../../components/Icon.vue';
-    import Button from '../../components/Button.vue';
+    import PrimaryButton from '../../components/PrimaryButton.vue';
     
     export default {
-        components: { Icon, Button },
-        methods: {
+        components: { Icon, PrimaryButton },
+        methods:
+        {
             logout(e) {
                 store.auth.removeToken();
                 this.$router.push({ name: "Login" });

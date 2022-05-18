@@ -13,7 +13,8 @@
     import store from '../store';
 
     export default {
-        computed: {
+        computed:
+        {
             isAuthed: () => store.auth.authenticated()
         }
     }

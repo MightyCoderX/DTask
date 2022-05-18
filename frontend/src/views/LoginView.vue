@@ -6,7 +6,7 @@
 
 <template>
     <div class="login">
-        <Form action="//localhost:5000/api/users/login" method="post">
+        <Form action="//localhost:5000/api/users/login" method="post" :on-response="login">
             <h1>Login</h1>
 
             <FormField label="Email" :input-options="{
@@ -28,7 +28,23 @@
     </div>
 </template>
 
-<style>
+<script>
+    import store from '../store';
+
+    export default {
+        components: { Form, FormField },
+        methods:
+        {
+            login(data)
+            {
+                store.auth.setToken(data.token);
+                this.$router.push({ name: 'Dashboard' });
+            }
+        }
+    }
+</script>
+
+<style scoped>
     .login
     {
         padding: 1rem;

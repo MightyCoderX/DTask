@@ -24,7 +24,7 @@
                 currentText: ''
             }
         },
-        mounted()
+        created()
         {
             this.currentText = this.task.text;
         },
@@ -34,17 +34,19 @@
             {
                 if(this.editing) return;
 
+                const prevText = this.currentText;
+
                 const spanText = e.target;
 
                 spanText.focus();
                 this.editing = true;
 
-                console.log(this.editing);
-
-                const edited = e =>
+                const edited = () =>
                 {
-                    // Send PUT request
                     this.editing = false;
+
+                    if(prevText.trim() === this.currentText.trim()) return;
+
                     console.log('Edited ' + this.task._id);
 
                     fetch(`//localhost:5000/api/tasks/${this.task._id}`, {
@@ -54,7 +56,7 @@
                         },
                         method: 'PUT',
                         body: new URLSearchParams({
-                            text: this.currentText
+                            text: this.currentText.trim()
                         })
                     })
                     .then(res => res.json())
@@ -77,36 +79,11 @@
             },
             del(e)
             {
-                fetch(`//localhost:5000/api/tasks/${this.task._id}`, {
-                    headers:
-                    {
-                        'Authorization': 'Bearer ' + store.auth.getToken()
-                    },
-                    method: 'DELETE'
-                })
-                .then(res => res.json())
-                .then(data =>
-                {
-                    console.log(data);
-                });
+                store.tasks.delete(this.task);
             },
             complete(e)
             {
-                fetch(`//localhost:5000/api/tasks/${this.task._id}`, {
-                    headers:
-                    {
-                        'Authorization': 'Bearer ' + store.auth.getToken()
-                    },
-                    method: 'PUT',
-                    body: new URLSearchParams({
-                        completed: !this.task.completed
-                    })
-                })
-                .then(res => res.json())
-                .then(data =>
-                {
-                    console.log(data);
-                });
+                store.tasks.toggleCompleted(this.task);
             }
         },
         components: { Icon }

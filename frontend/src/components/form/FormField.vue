@@ -1,15 +1,35 @@
 <template>
     <div class="form-field">
-        <input class="input" :="inputOptions" placeholder=" ">
+        <input class="input" :="inputOptions" placeholder=" " v-model="value" v-bind="$attrs.onKeyup">
         <span class="label">{{ label }}</span>
     </div>
 </template>
 
 <script>
     export default {
-        props: { 
+        props:
+        { 
             label: String, 
-            inputOptions: Object 
+            inputOptions: Object,
+            modelValue: String
+        },
+        mounted()
+        {
+            console.log(this.$attrs.onKeyup);
+        },
+        computed:
+        {
+            value:
+            {
+                get()
+                {
+                    return this.modelValue;
+                },
+                set(val)
+                {
+                    this.$emit('update:modelValue', val);
+                }
+            }
         }
     }
 </script>
@@ -54,7 +74,6 @@
         border-radius: 1em;
         padding: 1em;
         outline: none;
-        
     }
 
     .form-field .input:not(:placeholder-shown):valid

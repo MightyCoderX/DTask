@@ -6,7 +6,7 @@
 
 <template>
     <div class="register">
-        <Form action="//localhost:5000/api/users/" method="post">
+        <Form action="//localhost:5000/api/users/" method="post" :on-response="register">
             <h1>Register</h1>
 
 
@@ -44,8 +44,18 @@
 </template>
 
 <script>
+    import store from '../store';
+
     export default {
-        components: { Form, FormField }
+        components: { Form, FormField },
+        methods:
+        {
+            register(data)
+            {
+                store.auth.setToken(data.token);
+                this.$router.push({ name: 'Dashboard' });
+            }
+        }
     }
 </script>
 
