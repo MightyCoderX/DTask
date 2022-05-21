@@ -2,16 +2,19 @@ import mongoose from 'mongoose';
 
 const taskSchema = new mongoose.Schema(
     {
-        user: {
+        user:
+        {
             type: mongoose.Schema.Types.ObjectId,
             required: true,
             ref: 'User'
         },
-        text: {
+        text:
+        {
             type: String,
             required: [true, 'Please add a text value']
         },
-        completed: {
+        completed:
+        {
             type: Boolean,
             default: false
         }

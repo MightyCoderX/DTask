@@ -29,8 +29,10 @@ app.listen(port, () =>
 
 import taskRoutes from './routes/taskRoutes.js';
 import userRoutes from './routes/userRoutes.js';
+import statsRoutes from './routes/statsRoutes.js';
 
-app.use('/api/tasks', protect, taskRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/tasks', protect, taskRoutes);
+app.use('/api/stats', protect, statsRoutes);
 
 app.use(errorHandler);
