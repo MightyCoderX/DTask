@@ -1,5 +1,5 @@
 <template>
-    <aside class="sidebar">
+    <aside class="sidebar" :class="{hidden: !store.sidebarShown}">
         <RouterLink class="sidebar-item" :to="{ name: 'Tasks' }">
             <Icon name="assignment" />
             <span class="label">Tasks</span>
@@ -20,6 +20,12 @@
     
     export default {
         components: { Icon, PrimaryButton },
+        data()
+        {
+            return {
+                store
+            }
+        },
         methods:
         {
             logout(e) {
@@ -36,6 +42,29 @@
         background-color: #151515;
         display: flex;
         flex-direction: column;
+        width: 25vw;
+        min-width: 150px;
+        max-width: 200px;
+        transform-origin: left;
+        opacity: 1;
+        transition: 0.3s transform 0s, 0.2s opacity 0s, 0s flex-basis;
+        z-index: 10000;
+    }
+
+    @media screen and (max-width: 450px)
+    {
+        .sidebar
+        {
+            position: fixed;
+            height: 100%;
+        }
+    }
+
+    .sidebar.hidden
+    {
+        transform: translateX(-100%);
+        opacity: 0;
+        transition: 0.3s transform 0s, 0.2s opacity 0s;
     }
 
     .sidebar .sidebar-item

@@ -29,14 +29,15 @@ const tasks = {
     completed: [],
     update()
     {
-        this.tasks.sort((a, b) => new Date(a.createdAt) - new Date(b.createdAt))
+        this.tasks.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
         this.notCompleted = this.tasks.filter(task => !task.completed);
         this.completed = this.tasks.filter(task => task.completed);
     },
     create(taskData)
     {
         if(!taskData.text.trim()) return;
-        fetch('//localhost:5000/api/tasks', {
+        fetch('//localhost:5000/api/tasks',
+        {
             method: 'POST',
             body: new URLSearchParams({
                 text: taskData.text.trim()
@@ -49,8 +50,6 @@ const tasks = {
         .then(res => res.json())
         .then(data =>
         {
-            console.log(data);
-
             this.tasks.push(data);
             
             this.update();
@@ -69,7 +68,6 @@ const tasks = {
                 }
             })).json();
 
-            console.log(data);
             this.tasks = data;
 
             this.update();
@@ -115,11 +113,26 @@ const tasks = {
         .then(res => res.json())
         .then(data =>
         {
-            this.tasks = this.tasks.filter(t => t._id !== task._id);
-            console.log(data);
+            this.tasks = this.tasks.filter(t => t._id !== data._id);
             this.update();
         });
     }
 }
 
-export default reactive({ auth, tasks });
+const widthMediaQuery = matchMedia('screen and (max-width: 450px)');
+
+const store = reactive(
+{
+    isMobile: widthMediaQuery.matches,
+    sidebarShown: true,
+    auth,
+    tasks
+});
+
+widthMediaQuery.addEventListener('change', e =>
+{
+    if(!e.matches) store.sidebarShown = true;
+    store.isMobile = e.matches;
+});
+
+export default store;

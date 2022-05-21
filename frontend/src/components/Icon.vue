@@ -13,8 +13,8 @@
 </script>
 
 <style scoped>
-    /* .material-icons-round
+    .md-icon
     {
-        display: block;
-    } */
+        user-select: none;
+    }
 </style>

@@ -1,5 +1,5 @@
 <template>
-    <li class="task">
+    <li class="task" :title="currentText">
         <input class="text" type="text" :readonly="!editing" v-model="currentText" @click="edit" >
         <div class="buttons">
             <Icon class="complete" @click="complete" name="check" />
@@ -98,12 +98,11 @@
         align-items: center;
         justify-content: space-between;
         gap: 1em;
-        border-bottom: 0.2em solid #000e33;
         width: 100%;
-        padding: 0 1em 0 0;
+        padding: 0 0.5em 0 0;
     }
 
-    .task .text
+    .text
     {
         background-color: transparent;
         color: #ddd;
@@ -112,6 +111,8 @@
         border-radius: 0.5em;
         outline: none;
         font-size: 1rem;
+        width: 100%;
+        text-overflow: ellipsis;
     }
 
     .task .text:read-only
@@ -119,18 +120,23 @@
         border-color: transparent;
     }
 
-    .task .md-icon
+    .buttons
+    {
+        display: flex;
+    }
+
+    .md-icon
     {
         cursor: pointer;
         transition: color 0.2s;
     }
 
-    .task .md-icon.del
+    .md-icon.del
     {
         color: #891a1a;
     }
 
-    .task .md-icon.del:hover
+    .md-icon.del:hover
     {
         color: firebrick;
     }

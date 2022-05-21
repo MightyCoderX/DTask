@@ -1,8 +1,16 @@
 <template>
     <header>
-        <h1 class="logo">DTask</h1>
+        <div class="logo-container">
+            <IconButton 
+                class="toggle-sidebar" 
+                v-if="dashboardInRoute && store.isMobile" 
+                icon-name="menu"
+                @click="toggleSidebar"
+            />
+            <h1 class="logo">DTask</h1>
+        </div>
         <nav>
-            <RouterLink :to="{ name: 'Dashboard' }" v-if="authStore.authenticated">Dashboard</RouterLink>
+            <!-- <RouterLink :to="{ name: 'Dashboard' }" v-if="authStore.authenticated">Dashboard</RouterLink> -->
             <RouterLink :to="{ name: 'Login'     }" v-if="!authStore.authenticated">Login</RouterLink>
             <RouterLink :to="{ name: 'Register'  }" v-if="!authStore.authenticated">Register</RouterLink>
         </nav>
@@ -11,14 +19,32 @@
 
 <script>
     import store from '../store';
+    import Icon from './Icon.vue';
+    import IconButton from './IconButton.vue';
 
     export default {
         data()
         {
             return {
+                store,
                 authStore: store.auth
+            };
+        },
+        computed:
+        {
+            dashboardInRoute()
+            {
+                return this.$route.matched[0]?.name === 'Dashboard'
             }
-        }
+        },
+        methods:
+        {
+            toggleSidebar()
+            {
+                store.sidebarShown = !store.sidebarShown;
+            }
+        },
+        components: { Icon, IconButton }
     }
 </script>
 
@@ -31,6 +57,13 @@
         justify-content: space-between;
         padding: 1rem;
         background-color: #181818;
+    }
+
+    header .logo-container
+    {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
     }
 
     header .logo

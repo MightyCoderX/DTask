@@ -8,7 +8,7 @@
         display: block;
         border: 0.3rem solid transparent;
         border-bottom-color: var(--accent-color);
-        height: 15%;
+        height: 8vmin;
         aspect-ratio: 1 / 1;
         border-radius: 50%;
         animation: spin 1s linear infinite;
