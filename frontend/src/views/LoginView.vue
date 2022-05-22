@@ -1,12 +1,9 @@
 <script setup>
-    import Form from '@/components/form/Form.vue';
-    import FormField from '@/components/form/FormField.vue';
-    import PrimaryButton from '@/components/PrimaryButton.vue';
 </script>
 
 <template>
     <div class="login">
-        <Form action="//localhost:5000/api/users/login" method="post" :on-response="login">
+        <Form action="//192.168.1.74:5000/api/users/login" method="post" :on-response="login">
             <h1>Login</h1>
 
             <FormField label="Email" :input-options="{
@@ -29,7 +26,10 @@
 </template>
 
 <script>
-    import store from '../store';
+    import Form from '@/components/form/Form.vue';
+import FormField from '@/components/form/FormField.vue';
+import PrimaryButton from '@/components/PrimaryButton.vue';
+import store from '../store';
 
     export default {
         components: { Form, FormField, PrimaryButton },

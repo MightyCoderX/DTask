@@ -1,8 +1,7 @@
 <template>
     <div class="tasks">
         <h1 class="title">Tasks</h1>
-
-        <LoadSpinner v-if="!tasksStore.tasks.length" />
+        <LoadSpinner v-if="tasksStore.tasks === null" />
 
         <NamedList v-else listTitle="To Do">
             <div class="new-task">
@@ -22,7 +21,7 @@
         <hr class="spacer">
 
         <NamedList class="completed" listTitle="Completed">
-            <Task v-for="task of tasksStore.completed" :key="task._id" :task="task"/>
+            <Task v-for="task of tasksStore.completed" :key="task._id" :task="task" completed/>
             <p class="placeholder" v-if="!tasksStore.completed.length">You've not completed any task yet!</p>
         </NamedList>
     </div>
@@ -30,13 +29,13 @@
 
 <script>
     import FormField from '../../../components/form/FormField.vue';
-    import Icon from '../../../components/Icon.vue';
-    import IconButton from '../../../components/IconButton.vue';
-    import LoadSpinner from '../../../components/LoadSpinner.vue';
-    import PrimaryButton from '../../../components/PrimaryButton.vue';
-    import store from '../../../store';
-    import NamedList from './NamedList.vue';
-    import Task from './Task.vue';
+import Icon from '../../../components/Icon.vue';
+import IconButton from '../../../components/IconButton.vue';
+import LoadSpinner from '../../../components/LoadSpinner.vue';
+import PrimaryButton from '../../../components/PrimaryButton.vue';
+import store from '../../../store';
+import NamedList from './NamedList.vue';
+import Task from './Task.vue';
 
     export default {
         components: { Task, PrimaryButton, FormField, LoadSpinner, Icon, IconButton, NamedList },
@@ -67,7 +66,6 @@
         align-items: center;
         align-content: flex-start;
         gap: 2rem;
-        padding-bottom: 5rem !important;
     }
 
     .title
@@ -103,6 +101,11 @@
     .task:nth-child(odd)
     {
         background-color: #151515;
+    }
+
+    .named-list.completed .task .text
+    {
+        text-decoration: line-through;
     }
 
     .named-list .placeholder

@@ -1,36 +1,29 @@
 import asyncHandler from 'express-async-handler';
 import { startOfDay, endOfDay, startOfWeek, endOfWeek, startOfMonth, endOfMonth } from 'date-fns';
 
-import User from '../models/userModel.js';
 import Stat from '../models/statModel.js';
 import mongoose from 'mongoose';
+
+// @desc    Get all current user's stats
+// @route   GET /api/stats/
+// @acces   Private
+export const getAllStats = asyncHandler(async (req, res) =>
+{
+    res.json(await Stat.find({ user: req.user.id}).select('-__v'));
+});
 
 // @desc    Get daily stats
 // @route   GET /api/stats/daily
 // @acces   Private
 export const getDailyStats = asyncHandler(async (req, res) =>
 {
-    let day;
-
-    try
-    {
-        day = new Date(req.query.day)
-    }
-    catch(_) {}
-    finally
-    {
-        day = new Date();
-    }
-
-    console.log('Day:', day);
-
     const stats = await Stat.find(
     { 
         user: req.user.id, 
         createdAt:
         {
-            $gte: startOfDay(day),
-            $lte: endOfDay(day)
+            $gte: startOfDay(req.query.date),
+            $lte: endOfDay(req.query.date)
         }
     }).select('-__v');
 
@@ -42,18 +35,6 @@ export const getDailyStats = asyncHandler(async (req, res) =>
 // @acces   Private
 export const getWeeklyStats = asyncHandler(async (req, res) =>
 {
-    let firstDayOfWeek = new Date();
-
-    try
-    {
-        firstDayOfWeek = new Date(req.query.firstDayOfWeek)
-    }
-    catch(_) {}
-    finally
-    {
-        firstDayOfWeek = new Date();
-    }
-
     const options = {
         weekStartsOn: 2
     }
@@ -65,8 +46,8 @@ export const getWeeklyStats = asyncHandler(async (req, res) =>
                 user: mongoose.Types.ObjectId(req.user.id),
                 createdAt:
                 {
-                    $gte: startOfWeek(firstDayOfWeek, options),
-                    $lte: endOfWeek(firstDayOfWeek, options)
+                    $gte: startOfWeek(req.query.date, options),
+                    $lte: endOfWeek(req.query.date, options)
                 }
             }
         },
@@ -90,18 +71,6 @@ export const getWeeklyStats = asyncHandler(async (req, res) =>
 // @acces   Private
 export const getMonthlyStats = asyncHandler(async (req, res) =>
 {
-    let firstDayOfMonth = new Date();
-
-    try
-    {
-        firstDayOfMonth = new Date(req.query.firstDayOfWeek)
-    }
-    catch(_) {}
-    finally
-    {
-        firstDayOfMonth = new Date();
-    }
-
     const stats = await Stat.aggregate([
         {
             $match:
@@ -109,8 +78,8 @@ export const getMonthlyStats = asyncHandler(async (req, res) =>
                 user: mongoose.Types.ObjectId(req.user.id),
                 createdAt:
                 {
-                    $gte: startOfMonth(firstDayOfMonth),
-                    $lte: endOfMonth(firstDayOfMonth)
+                    $gte: startOfMonth(req.query.date),
+                    $lte: endOfMonth(req.query.date)
                 }
             }
         },
@@ -149,3 +118,5 @@ export const updateUserStats = async (user, update) =>
 
     console.log(stats, update);
 }
+
+

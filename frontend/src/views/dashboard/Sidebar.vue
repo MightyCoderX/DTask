@@ -14,9 +14,9 @@
 </template>
 
 <script>
-    import store from '../../store.js';
     import Icon from '../../components/Icon.vue';
-    import PrimaryButton from '../../components/PrimaryButton.vue';
+import PrimaryButton from '../../components/PrimaryButton.vue';
+import store from '../../store.js';
     
     export default {
         components: { Icon, PrimaryButton },
@@ -28,12 +28,19 @@
         },
         methods:
         {
-            logout(e) {
+            logout(e)
+            {
                 store.auth.removeToken();
                 this.$router.push({ name: "Login" });
             }
         }
     }
+
+    window.addEventListener('click', (e) =>
+    {
+        if(store.isMobile && !e.target.matches('.toggle-sidebar'))
+            store.sidebarShown = false;
+    });
 </script>
 
 <style scoped>

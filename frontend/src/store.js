@@ -24,11 +24,12 @@ const auth = {
 }
 
 const tasks = {
-    tasks: [],
+    tasks: null,
     notCompleted: [],
     completed: [],
     update()
     {
+        if(!this.tasks) return;
         this.tasks.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
         this.notCompleted = this.tasks.filter(task => !task.completed);
         this.completed = this.tasks.filter(task => task.completed);
@@ -36,7 +37,7 @@ const tasks = {
     create(taskData)
     {
         if(!taskData.text.trim()) return;
-        fetch('//localhost:5000/api/tasks',
+        fetch('//192.168.1.74:5000/api/tasks',
         {
             method: 'POST',
             body: new URLSearchParams({
@@ -62,7 +63,7 @@ const tasks = {
 
         try
         {
-            const data = await (await fetch('//localhost:5000/api/tasks', {
+            const data = await (await fetch('//192.168.1.74:5000/api/tasks', {
                 headers: {
                     'Authorization': 'Bearer ' + auth.getToken()
                 }
@@ -82,7 +83,7 @@ const tasks = {
     },
     toggleCompleted(task)
     {
-        fetch(`//localhost:5000/api/tasks/${task._id}`, {
+        fetch(`//192.168.1.74:5000/api/tasks/${task._id}`, {
             headers:
             {
                 'Authorization': 'Bearer ' + auth.getToken()
@@ -103,7 +104,7 @@ const tasks = {
     },
     delete(task)
     {
-        fetch(`//localhost:5000/api/tasks/${task._id}`, {
+        fetch(`//192.168.1.74:5000/api/tasks/${task._id}`, {
             headers:
             {
                 'Authorization': 'Bearer ' + auth.getToken()
@@ -116,6 +117,11 @@ const tasks = {
             this.tasks = this.tasks.filter(t => t._id !== data._id);
             this.update();
         });
+    },
+    toggleSelect(id)
+    {
+        const i = this.tasks.findIndex(task => task._id === id);
+        this.tasks[i].selected = !this.tasks[i]?.selected;
     }
 }
 

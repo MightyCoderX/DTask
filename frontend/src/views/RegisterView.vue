@@ -1,12 +1,6 @@
-<script setup>
-    import Form from '@/components/form/Form.vue';
-    import FormField from '@/components/form/FormField.vue';
-    import Button from '@/components/Button.vue';
-</script>
-
 <template>
     <div class="register">
-        <Form action="//localhost:5000/api/users/" method="post" :on-response="register">
+        <Form action="//192.168.1.74:5000/api/users/" method="post" :on-response="register">
             <h1>Register</h1>
 
 
@@ -38,16 +32,19 @@
                 required: true
             }"/>
 
-            <Button type="submit" label="Register" />
+            <PrimaryButton type="submit" label="Register" />
         </Form>
     </div>
 </template>
 
 <script>
+    import Form from '@/components/form/Form.vue';
+    import FormField from '@/components/form/FormField.vue';
+    import PrimaryButton from '@/components/PrimaryButton.vue';
     import store from '../store';
 
     export default {
-        components: { Form, FormField },
+        components: { Form, FormField, PrimaryButton },
         methods:
         {
             register(data)

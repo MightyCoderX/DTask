@@ -1,5 +1,6 @@
 <template>
-    <li class="task" :title="currentText">
+    <li class="task" :class="{ 'completed': completed, 'selected': selectedVal }" :title="currentText">
+        <input type="checkbox" v-model="selected">
         <input class="text" type="text" :readonly="!editing" v-model="currentText" @click="edit" >
         <div class="buttons">
             <Icon class="complete" @click="complete" name="check" />
@@ -9,19 +10,37 @@
 </template>
 
 <script>
-    import store from '../../../store'; 
     import Icon from '../../../components/Icon.vue';
+    import store from '../../../store';
     
     export default {
-        props: 
+        props:
         {
-            task: Object
+            task: Object,
+            completed: Boolean
         },
         data()
         {
             return {
                 editing: false,
-                currentText: ''
+                currentText: '',
+                selectedVal: false
+            }
+        },
+        computed:
+        {
+            selected:
+            {
+                get()
+                {
+                    return this.selectedVal;
+                },
+                set(val)
+                {
+                    console.log('Selected ' + this.task._id);
+                    store.tasks.toggleSelect(this.task._id);
+                    this.selectedVal = val;
+                }
             }
         },
         created()
@@ -99,7 +118,7 @@
         justify-content: space-between;
         gap: 1em;
         width: 100%;
-        padding: 0 0.5em 0 0;
+        padding: 0 0.5em;
     }
 
     .text
@@ -123,6 +142,7 @@
     .buttons
     {
         display: flex;
+        gap: 1rem;
     }
 
     .md-icon
@@ -149,5 +169,15 @@
     .task .md-icon.complete:hover
     {
         color: forestgreen;
+    }
+
+    .task.completed .text
+    {
+        text-decoration: line-through;
+    }
+
+    .task.selected
+    {
+        background-color: blue !important;
     }
 </style>

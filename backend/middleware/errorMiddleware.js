@@ -11,9 +11,8 @@ export function errorHandler(err, req, res, next)
     if(process.env.NODE_ENV === 'development')
     {
         data.stack = err.stack;
+        console.log(err);
     }
-
-    console.log(err);
 
     res.json(data);
 }
