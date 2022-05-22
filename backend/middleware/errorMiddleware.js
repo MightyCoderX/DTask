@@ -13,5 +13,7 @@ export function errorHandler(err, req, res, next)
         data.stack = err.stack;
     }
 
+    console.log(err);
+
     res.json(data);
 }

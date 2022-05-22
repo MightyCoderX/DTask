@@ -11,22 +11,26 @@ const statSchema = mongoose.Schema(
         addedTasks:
         {
             type: Number,
-            required: [true, 'Number of added tasks is required']
+            default: 0,
+            min: 0
         },
         completedTasks:
         {
             type: Number,
-            required: [true, 'Number of completed tasks is required']
+            default: 0,
+            min: 0
         },
-        updatedTasks:
+        editedTasks:
         {
             type: Number,
-            required: [true, 'Number of updated tasks is required']
+            default: 0,
+            min: 0
         },
         deletedTasks:
         {
             type: Number,
-            required: [true, 'Number of deleted tasks is required']
+            default: 0,
+            min: 0
         }
     },
     {

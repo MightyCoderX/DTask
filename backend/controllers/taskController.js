@@ -1,5 +1,7 @@
 import asyncHandler from 'express-async-handler';
 
+import { updateUserStats } from './statController.js';
+
 import Task from '../models/taskModel.js';
 import User from '../models/userModel.js';
 
@@ -27,6 +29,8 @@ export const setTask = asyncHandler(async (req, res) =>
         text: req.body.text,
         user: req.user.id
     });
+
+    updateUserStats(req.user.id, { $inc: { 'addedTasks': 1 } });
 
     res.status(201).json(task);
 });
@@ -60,6 +64,15 @@ export const updateTask = asyncHandler(async (req, res) =>
 
     const updatedTask = await Task.findByIdAndUpdate(req.params.id, req.body, { new: true });
 
+    if(task.completed != updatedTask.completed)
+    {
+        updateUserStats(req.user.id, { $inc: { 'completedTasks': task.completed ? -1 : 1 } });
+    }
+    else if(task.text != updatedTask.text)
+    {
+        updateUserStats(req.user.id, { $inc: { 'editedTasks': 1 } });
+    }
+
     res.json(updatedTask);
 });
 
@@ -91,6 +104,8 @@ export const deleteTask = asyncHandler(async (req, res) =>
     }
 
     await task.remove();
+
+    updateUserStats(req.user.id, { $inc: { 'deletedTasks': 1 } });
 
     res.json(task);
 });
