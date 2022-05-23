@@ -117,7 +117,6 @@
         display: flex;
         align-items: center;
         justify-content: space-between;
-        gap: 1em;
         width: 100%;
         padding: 0 0.5em;
         position: relative;
