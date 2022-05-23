@@ -1,6 +1,6 @@
 <template>
     <li class="task" :class="{ 'completed': completed, 'selected': selectedVal }" :title="currentText">
-        <input type="checkbox" v-model="selected">
+        <Checkbox class="select" v-model="selected" />
         <input class="text" type="text" :readonly="!editing" v-model="currentText" @click="edit" >
         <div class="buttons">
             <Icon class="complete" @click="complete" name="check" />
@@ -12,6 +12,7 @@
 <script>
     import Icon from '../../../components/Icon.vue';
     import store from '../../../store';
+    import Checkbox from '../../../components/Checkbox.vue';
     
     export default {
         props:
@@ -106,7 +107,7 @@
                 store.tasks.toggleCompleted(this.task);
             }
         },
-        components: { Icon }
+        components: { Icon, Checkbox }
     }
 </script>
 
@@ -119,6 +120,8 @@
         gap: 1em;
         width: 100%;
         padding: 0 0.5em;
+        position: relative;
+        z-index: 1;
     }
 
     .text
@@ -176,8 +179,13 @@
         text-decoration: line-through;
     }
 
-    .task.selected
+    .task.selected::before
     {
-        background-color: blue !important;
+        content: '';
+        position: absolute;
+        inset: 0;
+        z-index: -1;
+        border-radius: inherit;
+        background-color: #0000aa22 !important;
     }
 </style>
