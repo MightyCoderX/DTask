@@ -1,31 +1,41 @@
 <template>
-    <li class="task" :class="{ 'completed': completed, 'selected': selectedVal }" :title="currentText">
-        <Checkbox class="select" v-model="selected" />
-        <input class="text" type="text" :readonly="!editing" v-model="currentText" @click="edit" >
-        <div class="buttons">
-            <Icon class="complete" @click="complete" name="check" />
-            <Icon class="del" @click="del" name="delete" />
+    <li class="task" :class="{ 'completed': completed, 'selected': selected }" >
+        <Checkbox class="select" v-model="selected" v-if="showSelect" />
+        <input 
+            class="text" 
+            type="text" 
+            :readonly="!editing" 
+            v-model="currentText" 
+            :title="currentText" 
+            @click="edit"
+        >
+        <div class="buttons" v-if="showControls">
+            <CompleteButton @click="complete"/>
+            <DeleteButton @click="del" />
         </div>
     </li>
 </template>
 
 <script>
+    import Checkbox from '../../../components/Checkbox.vue';
     import Icon from '../../../components/Icon.vue';
     import store from '../../../store';
-    import Checkbox from '../../../components/Checkbox.vue';
+    import CompleteButton from '../../../components/tasks/CompleteButton.vue';
+    import DeleteButton from '../../../components/tasks/DeleteButton.vue';
     
     export default {
         props:
         {
             task: Object,
-            completed: Boolean
+            completed: Boolean,
+            showControls: Boolean,
+            showSelect: Boolean
         },
         data()
         {
             return {
                 editing: false,
-                currentText: '',
-                selectedVal: false
+                currentText: ''
             }
         },
         computed:
@@ -34,13 +44,11 @@
             {
                 get()
                 {
-                    return this.selectedVal;
+                    return store.tasks.get(this.task._id).selected;
                 },
                 set(val)
                 {
-                    console.log('Selected ' + this.task._id);
-                    store.tasks.toggleSelect(this.task._id);
-                    this.selectedVal = val;
+                    store.tasks.get(this.task._id).selected = val;
                 }
             }
         },
@@ -95,7 +103,7 @@
                     spanText.removeEventListener('keydown', pressEnter);
                 }
 
-                spanText.addEventListener('keydown', pressEnter, { once: true });
+                spanText.addEventListener('keydown', pressEnter);
                 spanText.addEventListener('blur', edited, { once: true });
             },
             del(e)
@@ -107,7 +115,7 @@
                 store.tasks.toggleCompleted(this.task);
             }
         },
-        components: { Icon, Checkbox }
+        components: { Icon, Checkbox, DeleteButton, CompleteButton }
     }
 </script>
 
@@ -145,32 +153,6 @@
     {
         display: flex;
         gap: 1rem;
-    }
-
-    .md-icon
-    {
-        cursor: pointer;
-        transition: color 0.2s;
-    }
-
-    .md-icon.del
-    {
-        color: #891a1a;
-    }
-
-    .md-icon.del:hover
-    {
-        color: firebrick;
-    }
-
-    .task .md-icon.complete
-    {
-        color: #186318;
-    }
-
-    .task .md-icon.complete:hover
-    {
-        color: forestgreen;
     }
 
     .task.completed .text

@@ -1,9 +1,19 @@
 <template>
     <div class="tasks">
-        <h1 class="title">Tasks</h1>
-        <LoadSpinner v-if="tasksStore.tasks === null" />
+        <div class="title">
+            <h1>Tasks</h1>
+            <PrimaryButton label="Select" @click="selecting = !selecting" v-if="!selecting"/>
+            <div class="selection-controls" v-else>
+                <p class="selected-count">Selected: <span class="count">{{ selectedLength }}</span></p>
+                <div class="buttons">
+                    <CompleteButton class="complete-selected" @click="toggleComplete"/>
+                    <DeleteButton class="delete-selected" @click="del"/>
+                </div>
+            </div>
+        </div>
 
-        <NamedList v-else listTitle="To Do">
+        
+        <NamedList listTitle="To Do">
             <div class="new-task">
                 <FormField ref="newTaskInput" label="Text" :input-options="{
                     type: 'text',
@@ -14,14 +24,29 @@
                 
                 <IconButton class="add-task" @click="createTask" icon-name="add" />
             </div>
-            <Task v-for="task of tasksStore.notCompleted" :key="task._id" :task="task"/>
+            <LoadSpinner v-if="tasksStore.tasks === null" />
+            <Task 
+                v-else 
+                v-for="task of tasksStore.notCompleted" 
+                :key="task._id" 
+                :task="task"
+                :show-select="selecting"
+                :show-controls="!selecting"
+            />
             <p class="placeholder" v-if="!tasksStore.notCompleted.length">You've completed all tasks! <br>Great job!</p>
         </NamedList>
 
         <hr class="spacer">
 
         <NamedList class="completed" listTitle="Completed">
-            <Task v-for="task of tasksStore.completed" :key="task._id" :task="task" completed/>
+            <Task 
+                v-for="task of tasksStore.completed" 
+                :key="task._id" 
+                :task="task" 
+                completed
+                :show-select="selecting"
+                :show-controls="!selecting"
+            />
             <p class="placeholder" v-if="!tasksStore.completed.length">You've not completed any task yet!</p>
         </NamedList>
     </div>
@@ -29,20 +54,45 @@
 
 <script>
     import FormField from '../../../components/form/FormField.vue';
-import Icon from '../../../components/Icon.vue';
-import IconButton from '../../../components/IconButton.vue';
-import LoadSpinner from '../../../components/LoadSpinner.vue';
-import PrimaryButton from '../../../components/PrimaryButton.vue';
-import store from '../../../store';
-import NamedList from './NamedList.vue';
-import Task from './Task.vue';
+    import Icon from '../../../components/Icon.vue';
+    import IconButton from '../../../components/IconButton.vue';
+    import LoadSpinner from '../../../components/LoadSpinner.vue';
+    import PrimaryButton from '../../../components/PrimaryButton.vue';
+    import CompleteButton from '../../../components/tasks/CompleteButton.vue';
+    import DeleteButton from '../../../components/tasks/DeleteButton.vue';
+    import store from '../../../store';
+    import NamedList from './NamedList.vue';
+    import Task from './Task.vue';
 
     export default {
-        components: { Task, PrimaryButton, FormField, LoadSpinner, Icon, IconButton, NamedList },
+        components: { Task, PrimaryButton, FormField, LoadSpinner, Icon, IconButton, NamedList, CompleteButton, DeleteButton },
         data: () => ({
             tasksStore: store.tasks,
-            text: ''
+            text: '',
+            selectingVal: false
         }),
+        computed: 
+        {
+            selecting:
+            {
+                get()
+                {
+                    return this.selectingVal;
+                },
+                set(val)
+                {
+                    this.selectingVal = val;
+                    if(!val)
+                    {
+                        this.tasksStore.tasks.forEach(task => task.selected = false);
+                    }
+                }
+            },
+            selectedLength()
+            {
+                return this.tasksStore?.tasks?.filter(task => task.selected).length;
+            }
+        },
         methods:
         {
             createTask()
@@ -50,11 +100,32 @@ import Task from './Task.vue';
                 this.tasksStore.create({text: this.text});
 
                 this.$refs.newTaskInput.value = '';
+            },
+            toggleComplete()
+            {
+                this.tasksStore.tasks
+                .filter(task => task.selected)
+                .forEach(task =>
+                {
+                    this.tasksStore.toggleCompleted(task);
+                });
+                
+                console.log(this.tasksStore.tasks);
+            },
+            del()
+            {
+                this.tasksStore.tasks
+                .filter(task => task.selected)
+                .forEach(task =>
+                {
+                    this.tasksStore.delete(task);
+                });
             }
         },
-        mounted()
+        async mounted()
         {
-            this.tasksStore.getAll();
+            await this.tasksStore.getAll();
+            console.log(this.tasksStore.tasks);
         }
     }
 </script>
@@ -71,6 +142,40 @@ import Task from './Task.vue';
     .title
     {
         text-align: center;
+        position: relative;
+    }
+
+    .title :nth-child(2)
+    {
+        position: absolute;
+        top: 0;
+    }
+
+    .selection-controls
+    {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background-color: #111;
+        padding: 0.8em;
+        border-radius: 0.5em;
+        width: 100%;
+    }
+
+    .selection-controls .selected-count
+    {
+        font-weight: 300;
+    }
+    
+    .selection-controls .selected-count .count
+    {
+        font-weight: 500;
+    }
+
+    .selection-controls .buttons
+    {
+        display: flex;
+        gap: 1rem;
     }
 
     .load-spinner

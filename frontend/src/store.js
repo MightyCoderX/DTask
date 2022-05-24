@@ -31,6 +31,7 @@ const tasks = {
     {
         if(!this.tasks) return;
         this.tasks.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+        this.tasks.forEach(task => task.selected = false);
         this.notCompleted = this.tasks.filter(task => !task.completed);
         this.completed = this.tasks.filter(task => task.completed);
     },
@@ -56,6 +57,10 @@ const tasks = {
             this.update();
         })
         .catch(console.error);
+    },
+    get(id)
+    {
+        return this.tasks.find(t => t._id === id);
     },
     async getAll()
     {
@@ -96,7 +101,7 @@ const tasks = {
         .then(res => res.json())
         .then(data =>
         {
-            const targetTask = this.tasks.find(t => t._id == task._id);
+            const targetTask = this.get(data._id);
 
             targetTask.completed = data.completed;
             this.update();
@@ -114,7 +119,7 @@ const tasks = {
         .then(res => res.json())
         .then(data =>
         {
-            this.tasks = this.tasks.filter(t => t._id !== data._id);
+            this.tasks = this.get(data._id);
             this.update();
         });
     },

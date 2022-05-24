@@ -1,6 +1,6 @@
 <template>
     <div class="checkbox">
-        <input type="checkbox" class="input">
+        <input type="checkbox" class="input" v-model="value">
         <span class="custom-checkbox">
             <Icon class="check" name="check"/>
         </span>
@@ -10,12 +10,29 @@
 
 <script>
     import Icon from './Icon.vue';
+
     export default {
-    props: {
-        label: String
-    },
-    components: { Icon }
-}
+        props:
+        {
+            label: String,
+            modelValue: Boolean
+        },
+        computed:
+        {
+            value:
+            {
+                get()
+                {
+                    return this.modelValue;
+                },
+                set(val)
+                {
+                    this.$emit('update:modelValue', val);
+                }
+            }
+        },
+        components: { Icon }
+    }
 </script>
 
 <style scoped>
