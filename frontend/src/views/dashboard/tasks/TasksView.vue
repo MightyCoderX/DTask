@@ -130,8 +130,7 @@
         },
         mounted()
         {
-            console.log(this.tasksStore.completed, this.tasksStore.notCompleted);
-            this.tasksStore.getAll();
+            setInterval(() => this.tasksStore.getAll(), 5000);
         }
     }
 </script>
