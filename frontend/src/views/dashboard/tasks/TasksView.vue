@@ -90,7 +90,7 @@
             },
             selectedLength()
             {
-                return this.tasksStore?.tasks?.filter(task => task.selected).length;
+                return this.tasksStore?.tasks?.filter?.(task => task.selected)?.length || 0;
             }
         },
         methods:
@@ -111,6 +111,9 @@
                 });
                 
                 console.log(this.tasksStore.tasks);
+
+                this.selecting = false;
+                this.tasksStore.tasks.forEach(task => task.selected = false);
             },
             del()
             {
@@ -120,12 +123,15 @@
                 {
                     this.tasksStore.delete(task);
                 });
+
+                this.selecting = false;
+                this.tasksStore.tasks.forEach(task => task.selected = false);
             }
         },
-        async mounted()
+        mounted()
         {
-            await this.tasksStore.getAll();
-            console.log(this.tasksStore.tasks);
+            console.log(this.tasksStore.completed, this.tasksStore.notCompleted);
+            this.tasksStore.getAll();
         }
     }
 </script>
@@ -147,7 +153,7 @@
 
     .title :nth-child(2)
     {
-        position: absolute;
+        /* position: absolute; */
         top: 0;
     }
 

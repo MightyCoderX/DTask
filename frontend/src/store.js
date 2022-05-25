@@ -30,10 +30,11 @@ const tasks = {
     update()
     {
         if(!this.tasks) return;
-        this.tasks.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
-        this.tasks.forEach(task => task.selected = false);
-        this.notCompleted = this.tasks.filter(task => !task.completed);
-        this.completed = this.tasks.filter(task => task.completed);
+        this.tasks?.sort?.((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+        this.tasks?.forEach?.(task => task.selected = false);
+        this.notCompleted = this.tasks?.filter?.(task => !task.completed);
+        this.completed = this.tasks?.filter?.(task => task.completed);
+        console.log(this.tasks);
     },
     create(taskData)
     {
@@ -60,7 +61,7 @@ const tasks = {
     },
     get(id)
     {
-        return this.tasks.find(t => t._id === id);
+        return this.tasks?.find?.(t => t._id === id);
     },
     async getAll()
     {
@@ -119,7 +120,7 @@ const tasks = {
         .then(res => res.json())
         .then(data =>
         {
-            this.tasks = this.get(data._id);
+            this.tasks = this.tasks.filter(t => t._id !== data._id);
             this.update();
         });
     },
