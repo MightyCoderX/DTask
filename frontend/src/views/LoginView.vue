@@ -3,7 +3,7 @@
 
 <template>
     <div class="login">
-        <Form action="//192.168.1.74:5000/api/users/login" method="post" :on-response="login">
+        <Form :action="API.USER_LOGIN" method="post" :on-response="login">
             <h1>Login</h1>
 
             <FormField label="Email" :input-options="{
@@ -27,9 +27,10 @@
 
 <script>
     import Form from '@/components/form/Form.vue';
-import FormField from '@/components/form/FormField.vue';
-import PrimaryButton from '@/components/PrimaryButton.vue';
-import store from '../store';
+    import FormField from '@/components/form/FormField.vue';
+    import PrimaryButton from '@/components/PrimaryButton.vue';
+    import store from '../store';
+    import API from '../config/API';
 
     export default {
         components: { Form, FormField, PrimaryButton },

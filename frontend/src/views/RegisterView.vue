@@ -1,6 +1,6 @@
 <template>
     <div class="register">
-        <Form action="//192.168.1.74:5000/api/users/" method="post" :on-response="register">
+        <Form :action="API.USER_REGISTER" method="post" :on-response="register">
             <h1>Register</h1>
 
 
@@ -42,6 +42,7 @@
     import FormField from '@/components/form/FormField.vue';
     import PrimaryButton from '@/components/PrimaryButton.vue';
     import store from '../store';
+    import API from '../config/API';
 
     export default {
         components: { Form, FormField, PrimaryButton },

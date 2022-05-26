@@ -8,6 +8,7 @@
                 <div class="buttons">
                     <CompleteButton class="complete-selected" @click="toggleComplete"/>
                     <DeleteButton class="delete-selected" @click="del"/>
+                    <IconButton icon-name="close" class="clear-selection" @click="selecting = !selecting"/>
                 </div>
             </div>
         </div>
@@ -33,7 +34,7 @@
                 :show-select="selecting"
                 :show-controls="!selecting"
             />
-            <p class="placeholder" v-if="!tasksStore.notCompleted.length">You've completed all tasks! <br>Great job!</p>
+            <p class="placeholder" v-if="tasksStore.tasks !== null && tasksStore.notCompleted.length === 0">You've completed all tasks! <br>Great job!</p>
         </NamedList>
 
         <hr class="spacer">
@@ -84,13 +85,13 @@
                     this.selectingVal = val;
                     if(!val)
                     {
-                        this.tasksStore.tasks.forEach(task => task.selected = false);
+                        this.tasksStore.clearSelection();
                     }
                 }
             },
             selectedLength()
             {
-                return this.tasksStore?.tasks?.filter?.(task => task.selected)?.length || 0;
+                return this.tasksStore?.selected.length;
             }
         },
         methods:
@@ -104,7 +105,7 @@
             toggleComplete()
             {
                 this.tasksStore.tasks
-                .filter(task => task.selected)
+                .filter(task => this.tasksStore.selected.includes(task._id))
                 .forEach(task =>
                 {
                     this.tasksStore.toggleCompleted(task);
@@ -113,24 +114,25 @@
                 console.log(this.tasksStore.tasks);
 
                 this.selecting = false;
-                this.tasksStore.tasks.forEach(task => task.selected = false);
+                this.tasksStore.clearSelection();
             },
             del()
             {
                 this.tasksStore.tasks
-                .filter(task => task.selected)
+                .filter(task => this.tasksStore.selected.includes(task._id))
                 .forEach(task =>
                 {
                     this.tasksStore.delete(task);
                 });
 
                 this.selecting = false;
-                this.tasksStore.tasks.forEach(task => task.selected = false);
+                this.tasksStore.clearSelection();
             }
         },
         mounted()
         {
             setInterval(() => this.tasksStore.getAll(), 5000);
+            // this.tasksStore.getAll();
         }
     }
 </script>

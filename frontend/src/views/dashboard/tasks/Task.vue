@@ -44,11 +44,11 @@
             {
                 get()
                 {
-                    return store.tasks.get(this.task._id).selected;
+                    return store.tasks.selected.includes(this.task._id);
                 },
                 set(val)
                 {
-                    store.tasks.get(this.task._id).selected = val;
+                    store.tasks.toggleSelect(this.task._id, val);
                 }
             }
         },

@@ -1,4 +1,5 @@
 import { reactive } from 'vue';
+import API from './config/API';
 
 const auth = {
     token: '',
@@ -27,6 +28,7 @@ const tasks = {
     tasks: null,
     notCompleted: [],
     completed: [],
+    selected: [],
     update()
     {
         if(!this.tasks) return;
@@ -34,12 +36,11 @@ const tasks = {
         this.tasks?.forEach?.(task => task.selected = false);
         this.notCompleted = this.tasks?.filter?.(task => !task.completed);
         this.completed = this.tasks?.filter?.(task => task.completed);
-        console.log(this.tasks);
     },
     create(taskData)
     {
         if(!taskData.text.trim()) return;
-        fetch('//192.168.1.74:5000/api/tasks',
+        fetch(API.TASKS,
         {
             method: 'POST',
             body: new URLSearchParams({
@@ -69,7 +70,7 @@ const tasks = {
 
         try
         {
-            const data = await (await fetch('//192.168.1.74:5000/api/tasks', {
+            const data = await (await fetch(API.TASKS, {
                 headers: {
                     'Authorization': 'Bearer ' + auth.getToken()
                 }
@@ -83,13 +84,13 @@ const tasks = {
         catch(err)
         {
             console.error(err);
-            return [];
+            return null;
         }
         
     },
     toggleCompleted(task)
     {
-        fetch(`//192.168.1.74:5000/api/tasks/${task._id}`, {
+        fetch(`${API.TASKS}/${task._id}`, {
             headers:
             {
                 'Authorization': 'Bearer ' + auth.getToken()
@@ -110,7 +111,7 @@ const tasks = {
     },
     delete(task)
     {
-        fetch(`//192.168.1.74:5000/api/tasks/${task._id}`, {
+        fetch(`${API.TASKS}/${task._id}`, {
             headers:
             {
                 'Authorization': 'Bearer ' + auth.getToken()
@@ -124,10 +125,119 @@ const tasks = {
             this.update();
         });
     },
-    toggleSelect(id)
+    toggleSelect(id, value)
     {
-        const i = this.tasks.findIndex(task => task._id === id);
-        this.tasks[i].selected = !this.tasks[i]?.selected;
+        if(this.selected.includes(id) || !value)
+        {
+            this.selected = this.selected.filter(selId => selId !== id);
+        }
+        else
+        {
+            const task = this.tasks.find(task => task._id === id);
+            this.selected.push(task._id);
+        }
+    },
+    isSelected(id)
+    {
+        return this.selected.find(task => task._id === id) || false;
+    },
+    clearSelection()
+    {
+        this.selected = [];
+    }
+}
+
+const stats = {
+    all: null,
+    daily: null,
+    weekly: null,
+    monthly: null,
+    async getAll()
+    {
+        try
+        {
+            const data = await (await fetch(API.ALL_STATS, {
+                headers: {
+                    'Authorization': 'Bearer ' + auth.getToken()
+                }
+            })).json();
+
+            this.all = data;
+
+            this.update();
+            return this.all;
+        }
+        catch(err)
+        {
+            console.error(err);
+            return null;
+        }
+    },
+    async getDaily(day)
+    {
+        try
+        {
+            const data = await (await fetch(API.DAILY_STATS, {
+                query: {
+                    day: day || ''
+                },
+                headers: {
+                    'Authorization': 'Bearer ' + auth.getToken()
+                }
+            })).json();
+
+            this.daily = data;
+
+            this.update();
+            return this.daily;
+        }
+        catch(err)
+        {
+            console.error(err);
+            return null;
+        }
+    },
+    async getWeekly()
+    {
+        try
+        {
+            const data = await (await fetch(API.WEEKLY_STATS, {
+                headers: {
+                    'Authorization': 'Bearer ' + auth.getToken()
+                }
+            })).json();
+
+            this.weekly = data;
+
+            this.update();
+            return this.weekly;
+        }
+        catch(err)
+        {
+            console.error(err);
+            return null;
+        }
+    },
+    async getMonthly()
+    {
+        try
+        {
+            const data = await (await fetch(API.MONTHLY_STATS, {
+                headers: {
+                    'Authorization': 'Bearer ' + auth.getToken()
+                }
+            })).json();
+
+            this.monthly = data;
+
+            this.update();
+            return this.monthly;
+        }
+        catch(err)
+        {
+            console.error(err);
+            return null;
+        }
     }
 }
 
