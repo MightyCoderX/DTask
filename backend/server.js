@@ -1,5 +1,6 @@
 import express from 'express';
 import cors from 'cors';
+import path from 'path';
 import colors from 'colors';
 import { config as dotenvConfig } from 'dotenv';
 
@@ -34,5 +35,13 @@ import statsRoutes from './routes/statsRoutes.js';
 app.use('/api/users', userRoutes);
 app.use('/api/tasks', protect, taskRoutes);
 app.use('/api/stats', protect, statsRoutes);
+
+//Serve frontend
+if(process.env.NODE_ENV === 'production')
+{
+    app.use(express.static('./frontend/dist'));
+    app.get('*', (req, res) => 
+        res.sendFile(path.resolve('./', 'frontend', 'dist', 'index.html')));
+}
 
 app.use(errorHandler);
