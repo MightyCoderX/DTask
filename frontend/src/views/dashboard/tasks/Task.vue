@@ -78,6 +78,9 @@ import API from '../../../config/API';
 
                     console.log('Edited ' + this.task._id);
 
+                    spanText.removeEventListener('keydown', pressEnter);
+                    spanText.removeEventListener('blur', edited);
+
                     fetch(`${API.TASKS}/${this.task._id}`, {
                         headers:
                         {
@@ -100,12 +103,10 @@ import API from '../../../config/API';
                     if(e.key !== 'Enter') return;
                     
                     edited(e);
-
-                    spanText.removeEventListener('keydown', pressEnter);
                 }
 
                 spanText.addEventListener('keydown', pressEnter);
-                spanText.addEventListener('blur', edited, { once: true });
+                spanText.addEventListener('blur', edited);
             },
             del(e)
             {
