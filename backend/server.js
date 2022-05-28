@@ -20,7 +20,7 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cors({
-    origin: ['http://localhost:3000', 'http://192.168.1.74:3000']
+    origin: ['http://localhost:3000', 'https://d-task.herokuapp.com']
 }));
 
 app.listen(port, () =>
