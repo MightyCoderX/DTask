@@ -22,4 +22,9 @@
         width: 60vmin;
         min-width: 250px;
     }
+
+    .form .btn
+    {
+        font-size: 1rem;
+    }
 </style>

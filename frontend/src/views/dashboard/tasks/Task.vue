@@ -81,7 +81,7 @@ import API from '../../../config/API';
                     fetch(`${API.TASKS}${this.task._id}`, {
                         headers:
                         {
-                            'Authorization': 'Bearer ' + store.auth.getToken()
+                            'Authorization': 'Bearer ' + store.user.getToken()
                         },
                         method: 'PUT',
                         body: new URLSearchParams({
