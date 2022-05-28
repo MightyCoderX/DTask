@@ -1,4 +1,4 @@
-const PORT = 5000;
+const PORT = import.meta.env.PORT || 5000;
 
 const endpoints = {
     USER_REGISTER: '/users',
@@ -15,7 +15,7 @@ export default (() =>
 {
     for(let endpoint in endpoints)
     {
-        endpoints[endpoint] = `//${location.hostname}:${PORT}/api` + endpoints[endpoint];
+        endpoints[endpoint] = `/api` + endpoints[endpoint];
     }
 
     return Object.freeze(endpoints);
