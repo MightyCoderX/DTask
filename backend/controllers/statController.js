@@ -25,9 +25,10 @@ export const getDailyStats = asyncHandler(async (req, res) =>
             $gte: startOfDay(req.query.date),
             $lte: endOfDay(req.query.date)
         }
-    }).select('-__v');
+    })
+    .select('addedTasks completedTasks editedTasks deletedTasks');
 
-    res.json(stats);
+    res.json(stats[0] || {});
 });
 
 // @desc    Get weekly stats
@@ -36,7 +37,7 @@ export const getDailyStats = asyncHandler(async (req, res) =>
 export const getWeeklyStats = asyncHandler(async (req, res) =>
 {
     const options = {
-        weekStartsOn: 2
+        weekStartsOn: 1
     }
 
     const stats = await Stat.aggregate([
@@ -63,7 +64,7 @@ export const getWeeklyStats = asyncHandler(async (req, res) =>
         }
     ]);
 
-    res.json(stats);
+    res.json(stats[0] || {});
 });
 
 // @desc    Get monthly stats
@@ -95,7 +96,34 @@ export const getMonthlyStats = asyncHandler(async (req, res) =>
         }
     ]);
 
-    res.json(stats);
+    res.json(stats[0] || {});
+});
+
+// @desc    Get all time stats
+// @route   GET /api/stats/alltime
+// @acces   Private
+export const getAlltimeStats = asyncHandler(async (req, res) =>
+{
+    const stats = await Stat.aggregate([
+        {
+            $match:
+            {
+                user: mongoose.Types.ObjectId(req.user.id)
+            }
+        },
+        {
+            $group:
+            {
+                _id: null,
+                addedTasks: { $sum: "$addedTasks" },
+                completedTasks: { $sum: "$completedTasks" },
+                editedTasks: { $sum: "$editedTasks" },
+                deletedTasks: { $sum: "$deletedTasks" }
+            }
+        }
+    ]);
+
+    res.json(stats[0] || {});
 });
 
 export const updateUserStats = async (user, update) =>

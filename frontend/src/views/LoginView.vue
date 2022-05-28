@@ -1,9 +1,6 @@
-<script setup>
-</script>
-
 <template>
     <div class="login">
-        <Form :action="API.USER_LOGIN" method="post" :on-response="login">
+        <Form @submit.prevent="login">
             <h1>Login</h1>
 
             <FormField label="Email" :input-options="{
@@ -30,15 +27,14 @@
     import FormField from '@/components/form/FormField.vue';
     import PrimaryButton from '@/components/PrimaryButton.vue';
     import store from '../store';
-    import API from '../config/API';
 
     export default {
         components: { Form, FormField, PrimaryButton },
         methods:
         {
-            login(data)
+            async login(e)
             {
-                store.auth.setToken(data.token);
+                await store.user.login(new FormData(e.target));
                 this.$router.push({ name: 'Dashboard' });
             }
         }

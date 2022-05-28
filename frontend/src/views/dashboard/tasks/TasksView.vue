@@ -6,7 +6,7 @@
             <div class="selection-controls" v-else>
                 <p class="selected-count">Selected: <span class="count">{{ selectedLength }}</span></p>
                 <div class="buttons">
-                    <CompleteButton class="complete-selected" @click="toggleComplete"/>
+                    <CompleteButton class="complete-selected" @click="complete"/>
                     <DeleteButton class="delete-selected" @click="del"/>
                     <IconButton icon-name="close" class="clear-selection" @click="selecting = !selecting"/>
                 </div>
@@ -34,7 +34,7 @@
                 :show-select="selecting"
                 :show-controls="!selecting"
             />
-            <p class="placeholder" v-if="tasksStore.tasks !== null && tasksStore.notCompleted.length === 0">You've completed all tasks! <br>Great job!</p>
+            <p class="placeholder" v-if="tasksStore.tasks !== null && tasksStore.notCompleted?.length === 0">You've completed all tasks! <br>Great job!</p>
         </NamedList>
 
         <hr class="spacer">
@@ -48,7 +48,7 @@
                 :show-select="selecting"
                 :show-controls="!selecting"
             />
-            <p class="placeholder" v-if="!tasksStore.completed.length">You've not completed any task yet!</p>
+            <p class="placeholder" v-if="!tasksStore.completed?.length">You've not completed any task yet!</p>
         </NamedList>
     </div>
 </template>
@@ -102,13 +102,13 @@
 
                 this.$refs.newTaskInput.value = '';
             },
-            toggleComplete()
+            complete()
             {
                 this.tasksStore.tasks
                 .filter(task => this.tasksStore.selected.includes(task._id))
                 .forEach(task =>
                 {
-                    this.tasksStore.toggleCompleted(task);
+                    this.tasksStore.complete(task);
                 });
                 
                 console.log(this.tasksStore.tasks);
@@ -129,9 +129,15 @@
                 this.tasksStore.clearSelection();
             }
         },
-        mounted()
+        async created()
         {
-            setInterval(() => this.tasksStore.getAll(), 5000);
+            const sync = async () =>
+            {
+                await this.tasksStore.getAll();
+            }
+
+            await sync();
+            setInterval(sync, 5000);
             // this.tasksStore.getAll();
         }
     }

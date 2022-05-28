@@ -21,7 +21,8 @@
         color: #eee;
         border-radius: 0.5em;
         transition: background-color 0.2s ease;
-        font-weight: 400;
+        font-weight: 500;
+        font-size: 0.9rem;
     }
 
     .btn:hover,

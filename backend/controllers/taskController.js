@@ -42,6 +42,11 @@ export const updateTask = asyncHandler(async (req, res) =>
 {
     const task = await Task.findById(req.params.id);
 
+    if(req.body.completed !== undefined)
+    {
+        req.body.completed = req.body.completed === 'true' ? true : false;
+    } 
+
     if(!task)
     {
         res.status(404);
@@ -61,14 +66,21 @@ export const updateTask = asyncHandler(async (req, res) =>
         res.status(401);
         throw new Error('User not authorized');
     }
+    
+    if(task.completed && !req.body.completed)
+    {
+        res.status(403);
+        throw new Error('Cannot un-complete task!');
+    }
 
     const updatedTask = await Task.findByIdAndUpdate(req.params.id, req.body, { new: true });
 
-    if(task.completed != updatedTask.completed)
+    if(!task.completed && updatedTask.completed)
     {
-        updateUserStats(req.user.id, { $inc: { 'completedTasks': task.completed ? -1 : 1 } });
+        updateUserStats(req.user.id, { $inc: { 'completedTasks': 1 } });
     }
-    else if(task.text != updatedTask.text)
+    
+    if(task.text != updatedTask.text)
     {
         updateUserStats(req.user.id, { $inc: { 'editedTasks': 1 } });
     }

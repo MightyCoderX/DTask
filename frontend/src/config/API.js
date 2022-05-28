@@ -5,7 +5,7 @@ const endpoints = {
     USER_LOGIN: '/users/login',
     AUTHED_USER_INFO: '/users/me',
     TASKS: '/tasks',
-    ALL_STATS: '/stats',
+    ALLTIME_STATS: '/stats/alltime',
     DAILY_STATS: '/stats/daily',
     WEEKLY_STATS: '/stats/weekly',
     MONTHLY_STATS: '/stats/monthly'

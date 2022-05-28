@@ -1,6 +1,6 @@
 <template>
     <div class="register">
-        <Form :action="API.USER_REGISTER" method="post" :on-response="register">
+        <Form @submit.prevent="register">
             <h1>Register</h1>
 
 
@@ -42,15 +42,14 @@
     import FormField from '@/components/form/FormField.vue';
     import PrimaryButton from '@/components/PrimaryButton.vue';
     import store from '../store';
-    import API from '../config/API';
 
     export default {
         components: { Form, FormField, PrimaryButton },
         methods:
         {
-            register(data)
+            register(e)
             {
-                store.auth.setToken(data.token);
+                store.user.register(new FormData(e.target));
                 this.$router.push({ name: 'Dashboard' });
             }
         }

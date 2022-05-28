@@ -1,33 +1,12 @@
 <template>
-    <form class="form" :="$props" @submit.prevent="submit">
+    <form class="form" :="$props">
         <slot></slot>
     </form>
 </template>
 
 <script>
     export default {
-        props: 
-        {
-            onResponse: Function
-        },
-        methods:
-        {
-            submit(e)
-            {
-                const data = new URLSearchParams(new FormData(e.target));
-
-                fetch(e.target.action, { 
-                    method: e.target.method,
-                    body: data
-                })
-                .then(res => res.json())
-                .then(data =>
-                {
-                    this.onResponse(data);
-                })
-                .catch(console.error);
-            }
-        }
+    
     }
 </script>
 

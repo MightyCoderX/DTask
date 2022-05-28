@@ -11,8 +11,8 @@
         </div>
         <nav>
             <!-- <RouterLink :to="{ name: 'Dashboard' }" v-if="authStore.authenticated">Dashboard</RouterLink> -->
-            <RouterLink :to="{ name: 'Login'     }" v-if="!authStore.authenticated">Login</RouterLink>
-            <RouterLink :to="{ name: 'Register'  }" v-if="!authStore.authenticated">Register</RouterLink>
+            <RouterLink :to="{ name: 'Login'     }" v-if="!userStore.authenticated">Login</RouterLink>
+            <RouterLink :to="{ name: 'Register'  }" v-if="!userStore.authenticated">Register</RouterLink>
         </nav>
     </header>
 </template>
@@ -27,7 +27,7 @@
         {
             return {
                 store,
-                authStore: store.auth
+                userStore: store.user
             };
         },
         computed:

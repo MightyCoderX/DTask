@@ -1,9 +1,24 @@
 import { reactive } from 'vue';
 import API from './config/API';
 
-const auth = {
+async function tryFetchJson(url, options, errReturnValue)
+{
+    try
+    {
+        const data = await (await fetch(url, options)).json();
+        return data;
+    }
+    catch(err)
+    {
+        console.error(err);
+        return errReturnValue;
+    }
+}
+
+const user = {
     token: '',
     authenticated: !!localStorage.getItem('token'),
+    info: null,
     setToken(value)
     {
         if(!value) return;
@@ -21,6 +36,37 @@ const auth = {
     {
         localStorage.removeItem('token');
         this.authenticated = false;
+    },
+    async login(formData)
+    {
+        const resData = await tryFetchJson(API.USER_LOGIN, {
+            method: 'POST',
+            body: new URLSearchParams(formData)
+        });
+        
+        this.setToken(resData.token);
+    },
+    async register(formData)
+    {
+        const resData = await tryFetchJson(API.USER_REGISTER, {
+            method: 'POST',
+            body: new URLSearchParams(formData)
+        });
+        
+        this.setToken(resData.token);
+    },
+    async getInfo()
+    {
+        const userInfo = await tryFetchJson(API.AUTHED_USER_INFO, {
+            headers:
+            {
+                'Authorization': 'Bearer ' + user.getToken()
+            }
+        }, {});
+
+        this.info = userInfo;
+
+        return userInfo;
     }
 }
 
@@ -37,10 +83,10 @@ const tasks = {
         this.notCompleted = this.tasks?.filter?.(task => !task.completed);
         this.completed = this.tasks?.filter?.(task => task.completed);
     },
-    create(taskData)
+    async create(taskData)
     {
         if(!taskData.text.trim()) return;
-        fetch(API.TASKS,
+        const data = await tryFetchJson(API.TASKS,
         {
             method: 'POST',
             body: new URLSearchParams({
@@ -48,17 +94,13 @@ const tasks = {
             }),
             headers:
             {
-                'Authorization': 'Bearer ' + auth.getToken()
+                'Authorization': 'Bearer ' + user.getToken()
             }
-        })
-        .then(res => res.json())
-        .then(data =>
-        {
-            this.tasks.push(data);
-            
-            this.update();
-        })
-        .catch(console.error);
+        });
+
+        this.tasks.push(data);
+        
+        this.update();
     },
     get(id)
     {
@@ -68,62 +110,50 @@ const tasks = {
     {
         this.update();
 
-        try
-        {
-            const data = await (await fetch(API.TASKS, {
-                headers: {
-                    'Authorization': 'Bearer ' + auth.getToken()
-                }
-            })).json();
-
-            this.tasks = data;
-
-            this.update();
-            return this.tasks;
-        }
-        catch(err)
-        {
-            console.error(err);
-            return null;
-        }
-        
-    },
-    toggleCompleted(task)
-    {
-        fetch(`${API.TASKS}/${task._id}`, {
+        const data = await tryFetchJson(API.TASKS, {
             headers:
             {
-                'Authorization': 'Bearer ' + auth.getToken()
+                'Authorization': 'Bearer ' + user.getToken()
+            }
+        });
+
+        this.tasks = data;
+
+        this.update();
+        return this.tasks;
+        
+    },
+    async complete(task)
+    {
+        if(task.completed === true) return;
+        const data = await tryFetchJson(`${API.TASKS}/${task._id}`, {
+            headers:
+            {
+                'Authorization': 'Bearer ' + user.getToken()
             },
             method: 'PUT',
             body: new URLSearchParams({
-                completed: !task.completed
+                completed: true
             })
-        })
-        .then(res => res.json())
-        .then(data =>
-        {
-            const targetTask = this.get(data._id);
-
-            targetTask.completed = data.completed;
-            this.update();
         });
+        
+        task.completed = data.completed;
+        this.update();
     },
     delete(task)
     {
-        fetch(`${API.TASKS}/${task._id}`, {
+        const data = fetch(`${API.TASKS}/${task._id}`, {
             headers:
             {
-                'Authorization': 'Bearer ' + auth.getToken()
+                'Authorization': 'Bearer ' + user.getToken()
             },
             method: 'DELETE'
-        })
-        .then(res => res.json())
-        .then(data =>
-        {
-            this.tasks = this.tasks.filter(t => t._id !== data._id);
-            this.update();
         });
+        
+        if(!data) return;
+
+        this.tasks = this.tasks.filter(t => t._id !== data._id);
+        this.update();
     },
     toggleSelect(id, value)
     {
@@ -148,96 +178,74 @@ const tasks = {
 }
 
 const stats = {
-    all: null,
+    alltime: null,
     daily: null,
     weekly: null,
     monthly: null,
-    async getAll()
+    async getAlltime()
     {
-        try
-        {
-            const data = await (await fetch(API.ALL_STATS, {
-                headers: {
-                    'Authorization': 'Bearer ' + auth.getToken()
-                }
-            })).json();
+        const data = await tryFetchJson(API.ALLTIME_STATS, {
+            headers:
+            {
+                'Authorization': 'Bearer ' + user.getToken()
+            }
+        });
 
-            this.all = data;
+        delete data._id;
+        this.alltime = data;
 
-            this.update();
-            return this.all;
-        }
-        catch(err)
-        {
-            console.error(err);
-            return null;
-        }
+        return this.alltime;
     },
-    async getDaily(day)
+    async getDaily(date)
     {
-        try
+        const data = await tryFetchJson(API.DAILY_STATS+'?'+new URLSearchParams({
+            date: date || ''
+        }),
         {
-            const data = await (await fetch(API.DAILY_STATS, {
-                query: {
-                    day: day || ''
-                },
-                headers: {
-                    'Authorization': 'Bearer ' + auth.getToken()
-                }
-            })).json();
+            headers:
+            {
+                'Authorization': 'Bearer ' + user.getToken()
+            }
+        });
 
-            this.daily = data;
+        delete data._id;
+        this.daily = data;
 
-            this.update();
-            return this.daily;
-        }
-        catch(err)
-        {
-            console.error(err);
-            return null;
-        }
+        return this.daily;
     },
-    async getWeekly()
+    async getWeekly(date)
     {
-        try
+        const data = await tryFetchJson(API.WEEKLY_STATS+'?'+new URLSearchParams({
+            date: date || ''
+        }),
         {
-            const data = await (await fetch(API.WEEKLY_STATS, {
-                headers: {
-                    'Authorization': 'Bearer ' + auth.getToken()
-                }
-            })).json();
+            headers:
+            {
+                'Authorization': 'Bearer ' + user.getToken()
+            }
+        });
 
-            this.weekly = data;
+        delete data._id;
+        this.weekly = data;
 
-            this.update();
-            return this.weekly;
-        }
-        catch(err)
-        {
-            console.error(err);
-            return null;
-        }
+        return this.weekly;
     },
-    async getMonthly()
+    async getMonthly(date)
     {
-        try
+        const data = await tryFetchJson(API.MONTHLY_STATS+'?'+new URLSearchParams({
+            date: date || ''
+        }),
         {
-            const data = await (await fetch(API.MONTHLY_STATS, {
-                headers: {
-                    'Authorization': 'Bearer ' + auth.getToken()
-                }
-            })).json();
+            headers:
+            {
+                'Authorization': 'Bearer ' + user.getToken()
+            }
+        });
 
-            this.monthly = data;
+        delete data._id;
+        this.monthly = data;
 
-            this.update();
-            return this.monthly;
-        }
-        catch(err)
-        {
-            console.error(err);
-            return null;
-        }
+        return this.monthly;
     }
 }
 
@@ -247,8 +255,9 @@ const store = reactive(
 {
     isMobile: widthMediaQuery.matches,
     sidebarShown: true,
-    auth,
-    tasks
+    user,
+    tasks,
+    stats
 });
 
 widthMediaQuery.addEventListener('change', e =>

@@ -3,6 +3,7 @@ import { createRouter, createWebHistory } from 'vue-router';
 import DashboardView from '@/views/dashboard/DashboardView.vue';
 import TasksView from '@/views/dashboard/tasks/TasksView.vue';
 import StatsView from '@/views/dashboard/stats/StatsView.vue';
+import AccountView from '@/views/dashboard/account/AccountView.vue';
 import store from '../store';
 
 const router = createRouter({
@@ -30,6 +31,11 @@ const router = createRouter({
                     path: 'stats',
                     name: 'Stats',
                     component: StatsView
+                },
+                {
+                    path: 'account',
+                    name: 'Account',
+                    component: AccountView
                 }
             ]
         },
@@ -60,7 +66,7 @@ router.beforeEach((to, from, next) =>
 {
     if(to.matched.some(record => record.meta.protected))
     {
-        if(!store.auth.authenticated && !localStorage.getItem('token'))
+        if(!store.user.authenticated && !localStorage.getItem('token'))
         {
             next({ name: 'Login' });
 

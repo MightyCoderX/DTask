@@ -10,8 +10,8 @@
             @click="edit"
         >
         <div class="buttons" v-if="showControls">
-            <CompleteButton @click="complete"/>
-            <DeleteButton @click="del" />
+            <CompleteButton @click="complete" v-if="!completed" title="Complete task"/>
+            <DeleteButton @click="del" title="Delete task"/>
         </div>
     </li>
 </template>
@@ -22,6 +22,7 @@
     import store from '../../../store';
     import CompleteButton from '../../../components/tasks/CompleteButton.vue';
     import DeleteButton from '../../../components/tasks/DeleteButton.vue';
+import API from '../../../config/API';
     
     export default {
         props:
@@ -77,7 +78,7 @@
 
                     console.log('Edited ' + this.task._id);
 
-                    fetch(`//localhost:5000/api/tasks/${this.task._id}`, {
+                    fetch(`${API.TASKS}${this.task._id}`, {
                         headers:
                         {
                             'Authorization': 'Bearer ' + store.auth.getToken()
@@ -112,7 +113,7 @@
             },
             complete(e)
             {
-                store.tasks.toggleCompleted(this.task);
+                store.tasks.complete(this.task);
             }
         },
         components: { Icon, Checkbox, DeleteButton, CompleteButton }

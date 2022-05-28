@@ -8,16 +8,19 @@
             <Icon name="assignment" />
             <span class="label">Stats</span>
         </RouterLink>
-        <!-- <RouterLink :to="{ name: 'Stats' }">Stats</RouterLink> -->
+        <RouterLink class="sidebar-item" :to="{ name: 'Account' }">
+            <Icon name="person" />
+            <span class="label">Account</span>
+        </RouterLink>
         <PrimaryButton label="Logout" @click="logout" />
     </aside>
 </template>
 
 <script>
     import Icon from '../../components/Icon.vue';
-import PrimaryButton from '../../components/PrimaryButton.vue';
-import store from '../../store.js';
-    
+    import PrimaryButton from '../../components/PrimaryButton.vue';
+    import store from '../../store.js';
+        
     export default {
         components: { Icon, PrimaryButton },
         data()
@@ -30,7 +33,7 @@ import store from '../../store.js';
         {
             logout(e)
             {
-                store.auth.removeToken();
+                store.user.removeToken();
                 this.$router.push({ name: "Login" });
             }
         }
