@@ -78,7 +78,7 @@ import API from '../../../config/API';
 
                     console.log('Edited ' + this.task._id);
 
-                    fetch(`${API.TASKS}${this.task._id}`, {
+                    fetch(`${API.TASKS}/${this.task._id}`, {
                         headers:
                         {
                             'Authorization': 'Bearer ' + store.user.getToken()
