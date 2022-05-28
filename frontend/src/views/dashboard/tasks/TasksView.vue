@@ -67,11 +67,15 @@
 
     export default {
         components: { Task, PrimaryButton, FormField, LoadSpinner, Icon, IconButton, NamedList, CompleteButton, DeleteButton },
-        data: () => ({
-            tasksStore: store.tasks,
-            text: '',
-            selectingVal: false
-        }),
+        data()
+        {
+            return {
+                tasksStore: store.tasks,
+                text: '',
+                selectingVal: false,
+                syncInterval: null
+            }
+        },
         computed: 
         {
             selecting:
@@ -137,8 +141,11 @@
             }
 
             await sync();
-            setInterval(sync, 5000);
-            // this.tasksStore.getAll();
+            this.syncInterval = setInterval(sync, 5000);
+        },
+        unmounted()
+        {
+            clearInterval(this.syncInterval);
         }
     }
 </script>
