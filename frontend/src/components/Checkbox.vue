@@ -1,9 +1,9 @@
 <template>
     <div class="checkbox">
-        <input type="checkbox" class="input" v-model="value">
-        <span class="custom-checkbox">
+        <input type="checkbox" :id="id" class="input" v-model="value">
+        <label :for="id" class="custom-checkbox">
             <Icon class="check" name="check"/>
-        </span>
+        </label>
         <span class="label" v-if="label">{{ label }}</span>
     </div>
 </template>
@@ -17,12 +17,19 @@
             label: String,
             modelValue: Boolean
         },
+        data()
+        {
+            return {
+                id: 'checkbox'+Date.now()
+            }
+        },
         computed:
         {
             value:
             {
                 get()
                 {
+                    console.log(this);
                     return this.modelValue;
                 },
                 set(val)
@@ -64,7 +71,6 @@
         left: 0;
         right: 0;
         bottom: 0;
-        pointer-events: none;
         border: 1.5px solid #444;
     }
 
@@ -77,6 +83,7 @@
         font-size: 1.5em;
         color: transparent;
         font-weight: 600;
+        pointer-events: none;
     }
 
     .input:checked ~ .custom-checkbox .check
