@@ -72,6 +72,12 @@ export const updateTask = asyncHandler(async (req, res) =>
         res.status(403);
         throw new Error('Cannot un-complete task!');
     }
+    
+    if(req.body.text && task.completed)
+    {
+        res.status(403);
+        throw new Error('Cannot edit completed task!');
+    }
 
     const updatedTask = await Task.findByIdAndUpdate(req.params.id, req.body, { new: true });
 
@@ -80,7 +86,7 @@ export const updateTask = asyncHandler(async (req, res) =>
         updateUserStats(req.user.id, { $inc: { 'completedTasks': 1 } });
     }
     
-    if(task.text != updatedTask.text)
+    if(task.text.trim() != updatedTask.text.trim() && !task.completed)
     {
         updateUserStats(req.user.id, { $inc: { 'editedTasks': 1 } });
     }

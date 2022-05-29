@@ -61,6 +61,7 @@
         {
             edit(e)
             {
+                if(this.task.completed) return;
                 if(this.editing) return;
 
                 const prevText = this.currentText;
@@ -165,6 +166,7 @@
     .task.completed .text
     {
         text-decoration: line-through;
+        color: #999;
     }
 
     .task.selected::before
