@@ -22,7 +22,7 @@
     import store from '../../../store';
     import CompleteButton from '../../../components/tasks/CompleteButton.vue';
     import DeleteButton from '../../../components/tasks/DeleteButton.vue';
-import API from '../../../config/API';
+    import API from '../../../config/API';
     
     export default {
         props:
@@ -131,6 +131,11 @@ import API from '../../../config/API';
         padding: 0 0.5em;
         position: relative;
         z-index: 1;
+    }
+
+    .checkbox
+    {
+        margin-right: 0.5rem;
     }
 
     .text

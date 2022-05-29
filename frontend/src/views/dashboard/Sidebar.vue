@@ -5,7 +5,7 @@
             <span class="label">Tasks</span>
         </RouterLink>
         <RouterLink class="sidebar-item" :to="{ name: 'Stats' }">
-            <Icon name="assignment" />
+            <Icon name="trending_up" />
             <span class="label">Stats</span>
         </RouterLink>
         <RouterLink class="sidebar-item" :to="{ name: 'Account' }">

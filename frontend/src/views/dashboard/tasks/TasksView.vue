@@ -180,6 +180,7 @@
         padding: 0.8em;
         border-radius: 0.5em;
         width: 100%;
+        margin-top: 2rem;
     }
 
     .selection-controls .selected-count
