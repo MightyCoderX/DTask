@@ -137,12 +137,12 @@ const tasks = {
             })
         });
         
-        task.completed = data.completed;
+        this.get(task._id).completed = data.completed;
         this.update();
     },
-    delete(task)
+    async delete(task)
     {
-        const data = fetch(`${API.TASKS}/${task._id}`, {
+        const data = await tryFetchJson(`${API.TASKS}/${task._id}`, {
             headers:
             {
                 'Authorization': 'Bearer ' + user.getToken()
@@ -151,7 +151,7 @@ const tasks = {
         });
         
         if(!data) return;
-
+        
         this.tasks = this.tasks.filter(t => t._id !== data._id);
         this.update();
     },
