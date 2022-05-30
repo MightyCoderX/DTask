@@ -3,9 +3,33 @@ import API from './config/API';
 
 async function tryFetchJson(url, options, errReturnValue)
 {
+    if(['POST', 'PUT'].includes(options.method))
+    {
+        if(!options.headers) options.headers = {};
+        if(options.body instanceof FormData)
+        {
+            const formData = options.body;
+            options.body = {};
+
+            formData.forEach((value, key) =>
+            {
+                options.body[key] = value;
+            });
+        }
+
+        if(typeof options.body === 'object')
+        {
+            options.body = JSON.stringify(options.body);
+        }
+
+        options.headers['Content-Type'] = 'application/json';
+    }
+
     try
     {
-        const data = await (await fetch(url, options)).json();
+        const res = await fetch(url, options);
+
+        const data = await (res).json();
         return data;
     }
     catch(err)
@@ -41,8 +65,10 @@ const user = {
     {
         const resData = await tryFetchJson(API.USER_LOGIN, {
             method: 'POST',
-            body: new URLSearchParams(formData)
+            body: formData
         });
+
+        if(!resData) return;
         
         this.setToken(resData.token);
     },
@@ -50,8 +76,10 @@ const user = {
     {
         const resData = await tryFetchJson(API.USER_REGISTER, {
             method: 'POST',
-            body: new URLSearchParams(formData)
+            body: formData
         });
+
+        if(!resData) return;
         
         this.setToken(resData.token);
     },
@@ -89,14 +117,17 @@ const tasks = {
         const data = await tryFetchJson(API.TASKS,
         {
             method: 'POST',
-            body: new URLSearchParams({
+            body:
+            {
                 text: taskData.text.trim()
-            }),
+            },
             headers:
             {
                 'Authorization': 'Bearer ' + user.getToken()
             }
         });
+
+        if(!data) return;
 
         this.tasks.push(data);
         
@@ -117,6 +148,8 @@ const tasks = {
             }
         });
 
+        if(!data) return;
+
         this.tasks = data;
 
         this.update();
@@ -132,10 +165,14 @@ const tasks = {
                 'Authorization': 'Bearer ' + user.getToken()
             },
             method: 'PUT',
-            body: new URLSearchParams({
+            body:
+            {
                 completed: true
-            })
+            }
         });
+
+        console.log('Completed task:', task._id, data);
+        if(!data) return;
         
         this.get(task._id).completed = data.completed;
         this.update();

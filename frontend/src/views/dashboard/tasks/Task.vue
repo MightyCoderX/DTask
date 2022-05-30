@@ -74,13 +74,15 @@
                 const edited = () =>
                 {
                     this.editing = false;
+                    
+                    spanText.removeEventListener('keydown', pressEnter);
+                    spanText.removeEventListener('blur', edited);
 
                     if(prevText.trim() === this.currentText.trim()) return;
 
                     console.log('Edited ' + this.task._id);
 
-                    spanText.removeEventListener('keydown', pressEnter);
-                    spanText.removeEventListener('blur', edited);
+                    
 
                     fetch(`${API.TASKS}/${this.task._id}`, {
                         headers:
@@ -88,9 +90,10 @@
                             'Authorization': 'Bearer ' + store.user.getToken()
                         },
                         method: 'PUT',
-                        body: new URLSearchParams({
+                        body:
+                        {
                             text: this.currentText.trim()
-                        })
+                        }
                     })
                     .then(res => res.json())
                     .then(data =>

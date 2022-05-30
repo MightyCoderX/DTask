@@ -135,13 +135,13 @@
         },
         async created()
         {
-            const sync = async () =>
+            const syncTasks = async () =>
             {
                 await this.tasksStore.getAll();
             }
 
-            await sync();
-            this.syncInterval = setInterval(sync, 5000);
+            await syncTasks();
+            this.syncInterval = setInterval(syncTasks, 5000);
         },
         unmounted()
         {

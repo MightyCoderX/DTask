@@ -42,11 +42,6 @@ export const updateTask = asyncHandler(async (req, res) =>
 {
     const task = await Task.findById(req.params.id);
 
-    if(req.body.completed !== undefined)
-    {
-        req.body.completed = req.body.completed === 'true' ? true : false;
-    } 
-
     if(!task)
     {
         res.status(404);
@@ -67,13 +62,14 @@ export const updateTask = asyncHandler(async (req, res) =>
         throw new Error('User not authorized');
     }
     
-    if(task.completed && !req.body.completed)
+    if(Object.keys(req.body).includes('completed') && task.completed && !req.body.completed)
     {
         res.status(403);
         throw new Error('Cannot un-complete task!');
     }
     
-    if(req.body.text && task.completed)
+    
+    if(Object.keys(req.body).includes('text') && task.completed)
     {
         res.status(403);
         throw new Error('Cannot edit completed task!');
