@@ -75,14 +75,19 @@ export const updateTask = asyncHandler(async (req, res) =>
         throw new Error('Cannot edit completed task!');
     }
 
-    const updatedTask = await Task.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    const updateQuery = {};
+
+    if(Object.keys(req.body).includes('text')) updateQuery.text = req.body.text;
+    if(Object.keys(req.body).includes('completed')) updateQuery.completed = req.body.completed;
+
+    const updatedTask = await Task.findByIdAndUpdate(req.params.id, updateQuery, { new: true });
 
     if(!task.completed && updatedTask.completed)
     {
         updateUserStats(req.user.id, { $inc: { 'completedTasks': 1 } });
     }
     
-    if(task.text.trim() != updatedTask.text.trim() && !task.completed)
+    if(Object.keys(req.body).includes('text') && !(task.completed || updatedTask.completed))
     {
         updateUserStats(req.user.id, { $inc: { 'editedTasks': 1 } });
     }

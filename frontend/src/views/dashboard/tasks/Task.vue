@@ -9,6 +9,7 @@
             :title="currentText" 
             @click="edit"
         >
+        <time class="created-date" :title="dateCreated.toDateString() + ' ' + dateCreated.toLocaleTimeString()">{{ dateCreated.toLocaleDateString() }}</time>
         <div class="buttons" v-if="showControls">
             <CompleteButton @click="complete" v-if="!completed" title="Complete task"/>
             <DeleteButton @click="del" title="Delete task"/>
@@ -36,7 +37,8 @@
         {
             return {
                 editing: false,
-                currentText: ''
+                currentText: '',
+                dateCreated: new Date(this.task.createdAt),
             }
         },
         computed:
@@ -135,12 +137,13 @@
         padding: 0 0.5em;
         position: relative;
         z-index: 1;
+        gap: 1rem;
     }
 
-    .checkbox
+    /* .checkbox
     {
         margin-right: 0.5rem;
-    }
+    } */
 
     .text
     {
@@ -158,6 +161,12 @@
     .task .text:read-only
     {
         border-color: transparent;
+    }
+
+    .created-date
+    {
+        color: #999;
+        font-size: 0.8rem;
     }
 
     .buttons
