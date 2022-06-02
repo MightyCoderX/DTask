@@ -85,6 +85,8 @@ const user = {
     },
     async getInfo()
     {
+        if(this.info) return this.info;
+        
         const userInfo = await tryFetchJson(API.AUTHED_USER_INFO, {
             headers:
             {
