@@ -68,7 +68,6 @@
             async updateStats(period, dateStr)
             {
                 const functionName = `get${this.period[0].toUpperCase() + this.period.slice(1)}`;
-                console.log(functionName);
                 await this.statsStore[functionName](dateStr);
                 this.currentStats = this.statsStore[period];
             }
