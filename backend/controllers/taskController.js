@@ -48,14 +48,6 @@ export const updateTask = asyncHandler(async (req, res) =>
         throw new Error('Task not found');
     }
 
-    // const user = await User.findById(req.user.id);
-
-    // if(!user)
-    // {
-    //     res.status(401);
-    //     throw new Error('User not found');
-    // }
-
     if(task.user.toString() !== req.user.id)
     {
         res.status(401);
@@ -107,14 +99,6 @@ export const deleteTask = asyncHandler(async (req, res) =>
         res.status(404);
         throw new Error('Task not found');
     }
-
-    // const user = await User.findById(req.user.id);
-
-    // if(!user)
-    // {
-    //     res.status(401);
-    //     throw new Error('User not found');
-    // }
 
     if(task.user.toString() !== req.user.id)
     {
