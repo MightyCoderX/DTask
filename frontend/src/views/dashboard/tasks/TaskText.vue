@@ -1,5 +1,5 @@
 <template>
-    <div class="text" @keydown.prevent="updateValue">
+    <div class="text" @keydown="updateValue">
         {{ value }}
     </div>
 </template>
@@ -20,7 +20,7 @@
         {
             updateValue(e)
             {
-                this.value = e.innerText; 
+                this.value = e.target.innerText;
             }
         },
         computed:

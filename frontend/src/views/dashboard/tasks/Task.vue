@@ -9,10 +9,10 @@
             :title="currentText"
             @select.prevent="" 
             @dblclick="isMobile ? null : edit()"
-            @click.prevent.left="isMobile ? expand : null"
+            @touchend="expand"
             @click.prevent.right="expand"
-            ref="input"
             contenteditable=""
+            ref="textInput"
         />
         <time class="created-date" :title="dateCreated.toDateString() + ' ' + dateCreated.toLocaleTimeString()">{{ dateCreated.toLocaleDateString() }}</time>
         <div class="buttons" v-if="showControls">
@@ -81,10 +81,16 @@
                 if(this.editing) return;
 
                 const prevText = this.currentText;
+                
+                console.log(this.$refs.textInput);
 
-                const txtInput = this.$refs.input[0];
+                const txtInput = this.$refs.textInput.$el;
 
-                txtInput.focus();
+                setTimeout(() =>
+                {
+                    txtInput.focus();
+                }, 0);
+                
                 this.editing = true;
 
                 const edited = () =>
@@ -172,7 +178,7 @@
 
     .text
     {
-        background-color: transparent;
+        background-color: inherit;
         color: #ddd;
         border: 0.15em solid var(--accent-color);
         padding: 0.5em;
@@ -192,13 +198,15 @@
     .task.expanded .text
     {
         white-space: initial;
-        overflow: auto;
+        overflow-y: auto;
+        position: absolute;
     }
 
     .task.editing .text
     {
         white-space: initial;
         resize: vertical;
+        position: absolute;
     }
 
     :not(.task.editing) .text
