@@ -1,5 +1,5 @@
 <template>
-    <span class="md-icon material-icons-round">
+    <span class="md-icon material-icons-round" translate="no">
         {{ name }}
     </span>
 </template>
