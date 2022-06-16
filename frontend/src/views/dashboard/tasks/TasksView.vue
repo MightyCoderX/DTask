@@ -55,15 +55,15 @@
 
 <script>
     import FormField from '../../../components/form/FormField.vue';
-    import Icon from '../../../components/Icon.vue';
-    import IconButton from '../../../components/IconButton.vue';
-    import LoadSpinner from '../../../components/LoadSpinner.vue';
-    import PrimaryButton from '../../../components/PrimaryButton.vue';
-    import CompleteButton from '../../../components/tasks/CompleteButton.vue';
-    import DeleteButton from '../../../components/tasks/DeleteButton.vue';
-    import store from '../../../store';
-    import NamedList from './NamedList.vue';
-    import Task from './Task.vue';
+import Icon from '../../../components/Icon.vue';
+import IconButton from '../../../components/IconButton.vue';
+import LoadSpinner from '../../../components/LoadSpinner.vue';
+import PrimaryButton from '../../../components/PrimaryButton.vue';
+import CompleteButton from '../../../components/tasks/CompleteButton.vue';
+import DeleteButton from '../../../components/tasks/DeleteButton.vue';
+import store from '../../../store';
+import NamedList from './NamedList.vue';
+import Task from './Task.vue';
 
     export default {
         components: { Task, PrimaryButton, FormField, LoadSpinner, Icon, IconButton, NamedList, CompleteButton, DeleteButton },
@@ -155,7 +155,7 @@
     {
         display: flex;
         flex-direction: column;
-        justify-content: center;
+        justify-content: flex-start;
         align-items: center;
         gap: 2rem;
         width: 100%;
