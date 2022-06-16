@@ -18,6 +18,11 @@
 </script>
 
 <style scoped>
+    .named-list
+    {
+        width: inherit;
+    }
+
     .title
     {
         margin-bottom: 1em;

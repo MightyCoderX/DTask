@@ -1,16 +1,22 @@
 <template>
-    <li class="task" :class="{ 'completed': completed, 'selected': selected }" >
+    <li class="task" :class="{ completed, selected, expanded, editing }" >
         <Checkbox class="select" v-model="selected" v-if="showSelect" />
-        <input 
-            class="text" 
+        <TaskText 
+            class="text"
             type="text" 
-            :readonly="!editing" 
-            v-model="currentText" 
-            :title="currentText" 
-            @click="edit"
-        >
+            :contenteditable="editing" 
+            v-model="currentText"
+            :title="currentText"
+            @select.prevent="" 
+            @dblclick="isMobile ? null : edit()"
+            @click.prevent.left="isMobile ? expand : null"
+            @click.prevent.right="expand"
+            ref="input"
+            contenteditable=""
+        />
         <time class="created-date" :title="dateCreated.toDateString() + ' ' + dateCreated.toLocaleTimeString()">{{ dateCreated.toLocaleDateString() }}</time>
         <div class="buttons" v-if="showControls">
+            <EditButton @click="edit" v-if="!completed" title="Edit text"/>
             <CompleteButton @click="complete" v-if="!completed" title="Complete task"/>
             <DeleteButton @click="del" title="Delete task"/>
         </div>
@@ -20,10 +26,12 @@
 <script>
     import Checkbox from '../../../components/Checkbox.vue';
     import Icon from '../../../components/Icon.vue';
-    import store from '../../../store';
     import CompleteButton from '../../../components/tasks/CompleteButton.vue';
     import DeleteButton from '../../../components/tasks/DeleteButton.vue';
+    import EditButton from '../../../components/tasks/EditButton.vue';
     import API from '../../../config/API';
+    import store from '../../../store';
+    import TaskText from './TaskText.vue';
     
     export default {
         props:
@@ -39,6 +47,8 @@
                 editing: false,
                 currentText: '',
                 dateCreated: new Date(this.task.createdAt),
+                isMobile: store.isMobile,
+                expanded: false
             }
         },
         computed:
@@ -61,24 +71,31 @@
         },
         methods:
         {
-            edit(e)
+            expand()
+            {
+                this.expanded = !this.expanded;
+            },
+            edit()
             {
                 if(this.task.completed) return;
                 if(this.editing) return;
 
                 const prevText = this.currentText;
 
-                const spanText = e.target;
+                const txtInput = this.$refs.input[0];
 
-                spanText.focus();
+                txtInput.focus();
                 this.editing = true;
 
                 const edited = () =>
                 {
                     this.editing = false;
+
+                    txtInput.style.height = '100%';
+                    txtInput.removeAttribute('style');
                     
-                    spanText.removeEventListener('keydown', pressEnter);
-                    spanText.removeEventListener('blur', edited);
+                    txtInput.removeEventListener('keydown', pressEnter);
+                    txtInput.removeEventListener('blur', edited);
 
                     if(prevText.trim() === this.currentText.trim()) return;
 
@@ -111,8 +128,8 @@
                     edited(e);
                 }
 
-                spanText.addEventListener('keydown', pressEnter);
-                spanText.addEventListener('blur', edited);
+                txtInput.addEventListener('keydown', pressEnter);
+                txtInput.addEventListener('blur', edited);
             },
             del(e)
             {
@@ -123,7 +140,7 @@
                 store.tasks.complete(this.task);
             }
         },
-        components: { Icon, Checkbox, DeleteButton, CompleteButton }
+        components: { Icon, Checkbox, DeleteButton, CompleteButton, EditButton, TaskText }
     }
 </script>
 
@@ -134,10 +151,18 @@
         align-items: center;
         justify-content: space-between;
         width: 100%;
+        height: 3rem;
+        max-height: 100px;
         padding: 0 0.5em;
         position: relative;
         z-index: 1;
         gap: 1rem;
+    }
+
+    .task.expanded,
+    .task.editing
+    {
+        height: 100px;
     }
 
     /* .checkbox
@@ -155,10 +180,28 @@
         outline: none;
         font-size: 1rem;
         width: 100%;
+        align-self: stretch;
+        height: 100%;
+        min-height: 3rem;
+        max-height: inherit;
+        overflow: hidden;
         text-overflow: ellipsis;
+        white-space: pre;
     }
 
-    .task .text:read-only
+    .task.expanded .text
+    {
+        white-space: initial;
+        overflow: auto;
+    }
+
+    .task.editing .text
+    {
+        white-space: initial;
+        resize: vertical;
+    }
+
+    :not(.task.editing) .text
     {
         border-color: transparent;
     }

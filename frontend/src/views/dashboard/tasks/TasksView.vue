@@ -1,16 +1,16 @@
 <template>
     <div class="tasks">
-        <div class="title">
-            <h1>Tasks</h1>
-            <PrimaryButton label="Select" @click="selecting = !selecting" v-if="!selecting"/>
-            <div class="selection-controls" v-else>
+        <PrimaryButton class="select-button" label="Select" @click="selecting = !selecting" v-if="!selecting"/>
+        <div class="selection-controls" v-else>
                 <p class="selected-count">Selected: <span class="count">{{ selectedLength }}</span></p>
                 <div class="buttons">
-                    <CompleteButton class="complete-selected" @click="complete"/>
-                    <DeleteButton class="delete-selected" @click="del"/>
+                    <CompleteButton v-if="selectedLength" class="complete-selected" @click="complete"/>
+                    <DeleteButton v-if="selectedLength" class="delete-selected" @click="del"/>
                     <IconButton icon-name="close" class="clear-selection" @click="selecting = !selecting"/>
                 </div>
-            </div>
+        </div>
+        <div class="title">
+            <h1>Tasks</h1>
         </div>
 
         
@@ -153,10 +153,13 @@
 <style scoped>
     .tasks
     {
-        display: grid;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
         align-items: center;
-        align-content: flex-start;
         gap: 2rem;
+        width: 100%;
+        position: relative;
     }
 
     .title
@@ -171,6 +174,13 @@
         top: 0;
     }
 
+    .select-button
+    {
+        position: absolute;
+        top: 1.5rem;
+        left: 1rem;
+    }
+
     .selection-controls
     {
         display: flex;
@@ -179,8 +189,11 @@
         background-color: #111;
         padding: 0.8em;
         border-radius: 0.5em;
-        width: 100%;
-        margin-top: 2rem;
+        width: calc(100% - 2rem);
+        position: absolute;
+        top: 1.5rem;
+        left: 1rem;
+        z-index: 100;
     }
 
     .selection-controls .selected-count
