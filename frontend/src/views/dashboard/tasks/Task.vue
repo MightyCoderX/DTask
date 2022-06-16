@@ -30,7 +30,7 @@
     import DeleteButton from '../../../components/tasks/DeleteButton.vue';
     import EditButton from '../../../components/tasks/EditButton.vue';
     import API from '../../../config/API';
-    import store from '../../../store';
+    import store, {tryFetchJson} from '../../../store';
     import TaskText from './TaskText.vue';
     
     export default {
@@ -81,8 +81,6 @@
                 if(this.editing) return;
 
                 const prevText = this.currentText;
-                
-                console.log(this.$refs.textInput);
 
                 const txtInput = this.$refs.textInput.$el;
 
@@ -104,12 +102,11 @@
                     txtInput.removeEventListener('blur', edited);
 
                     if(prevText.trim() === this.currentText.trim()) return;
+                    console.log({ prevText, currentText: this.currentText});
 
                     console.log('Edited ' + this.task._id);
 
-                    
-
-                    fetch(`${API.TASKS}/${this.task._id}`, {
+                    tryFetchJson(`${API.TASKS}/${this.task._id}`, {
                         headers:
                         {
                             'Authorization': 'Bearer ' + store.user.getToken()
@@ -119,11 +116,6 @@
                         {
                             text: this.currentText.trim()
                         }
-                    })
-                    .then(res => res.json())
-                    .then(data =>
-                    {
-                        console.log(data);
                     });
                 }
 

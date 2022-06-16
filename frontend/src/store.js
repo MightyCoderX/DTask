@@ -1,7 +1,7 @@
 import { reactive } from 'vue';
 import API from './config/API';
 
-async function tryFetchJson(url, options, errReturnValue)
+export async function tryFetchJson(url, options, errReturnValue)
 {
     if(['POST', 'PUT'].includes(options.method))
     {

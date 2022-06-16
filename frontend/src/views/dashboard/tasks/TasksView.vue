@@ -242,6 +242,11 @@
         background-color: #151515;
     }
 
+    .named-list
+    {
+        z-index: 2;
+    }
+
     .named-list.completed .task .text
     {
         text-decoration: line-through;

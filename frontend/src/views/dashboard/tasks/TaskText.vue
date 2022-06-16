@@ -20,7 +20,10 @@
         {
             updateValue(e)
             {
-                this.value = e.target.innerText;
+                const temp = document.createElement('div');
+                temp.innerHTML = e.target.innerHTML;
+                console.log(e.target, temp, temp.innerText);
+                this.value = temp.innerText;
             }
         },
         computed:
@@ -33,6 +36,7 @@
                 },
                 set(val)
                 {
+                    console.log(val);
                     this.$emit('update:modelValue', val);
                 }
             }
