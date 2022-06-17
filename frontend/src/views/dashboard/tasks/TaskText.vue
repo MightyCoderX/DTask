@@ -1,5 +1,5 @@
 <template>
-    <div class="text" @keydown="updateValue">
+    <div class="text" @keydown="updateValue" ref="text">
         {{ value }}
     </div>
 </template>
@@ -20,10 +20,7 @@
         {
             updateValue(e)
             {
-                const temp = document.createElement('div');
-                temp.innerHTML = e.target.innerHTML;
-                console.log(e.target, temp, temp.innerText);
-                this.value = temp.innerText;
+                this.value = e.target.innerText;
             }
         },
         computed:
@@ -36,7 +33,6 @@
                 },
                 set(val)
                 {
-                    console.log(val);
                     this.$emit('update:modelValue', val);
                 }
             }

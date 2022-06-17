@@ -19,7 +19,7 @@
 <script>
     import Icon from '../../components/Icon.vue';
     import PrimaryButton from '../../components/PrimaryButton.vue';
-    import store from '../../store.js';
+    import store from '../../store';
         
     export default {
         components: { Icon, PrimaryButton },

@@ -3,7 +3,6 @@ import asyncHandler from 'express-async-handler';
 import { updateUserStats } from './statController.js';
 
 import Task from '../models/taskModel.js';
-import User from '../models/userModel.js';
 
 // @desc    Get tasks
 // @route   GET /api/tasks

@@ -25,7 +25,7 @@
                 
                 <IconButton class="add-task" @click="createTask" icon-name="add" />
             </div>
-            <LoadSpinner v-if="tasksStore.tasks === null" />
+            <LoadSpinner v-if="tasksStore.all === null" />
             <Task 
                 v-else 
                 v-for="task of tasksStore.notCompleted" 
@@ -34,7 +34,7 @@
                 :show-select="selecting"
                 :show-controls="!selecting"
             />
-            <p class="placeholder" v-if="tasksStore.tasks !== null && tasksStore.notCompleted?.length === 0">You've completed all tasks! <br>Great job!</p>
+            <p class="placeholder" v-if="tasksStore.all !== null && tasksStore.notCompleted?.length === 0">You've completed all tasks! <br>Great job!</p>
         </NamedList>
 
         <hr class="spacer">
@@ -55,15 +55,15 @@
 
 <script>
     import FormField from '../../../components/form/FormField.vue';
-import Icon from '../../../components/Icon.vue';
-import IconButton from '../../../components/IconButton.vue';
-import LoadSpinner from '../../../components/LoadSpinner.vue';
-import PrimaryButton from '../../../components/PrimaryButton.vue';
-import CompleteButton from '../../../components/tasks/CompleteButton.vue';
-import DeleteButton from '../../../components/tasks/DeleteButton.vue';
-import store from '../../../store';
-import NamedList from './NamedList.vue';
-import Task from './Task.vue';
+    import Icon from '../../../components/Icon.vue';
+    import IconButton from '../../../components/IconButton.vue';
+    import LoadSpinner from '../../../components/LoadSpinner.vue';
+    import PrimaryButton from '../../../components/PrimaryButton.vue';
+    import CompleteButton from '../../../components/tasks/CompleteButton.vue';
+    import DeleteButton from '../../../components/tasks/DeleteButton.vue';
+    import store from '../../../store';
+    import NamedList from './NamedList.vue';
+    import Task from './Task.vue';
 
     export default {
         components: { Task, PrimaryButton, FormField, LoadSpinner, Icon, IconButton, NamedList, CompleteButton, DeleteButton },
@@ -108,21 +108,21 @@ import Task from './Task.vue';
             },
             complete()
             {
-                this.tasksStore.tasks
+                this.tasksStore.all
                 .filter(task => this.tasksStore.selected.includes(task._id))
                 .forEach(task =>
                 {
                     this.tasksStore.complete(task);
                 });
                 
-                console.log(this.tasksStore.tasks);
+                console.log(this.tasksStore.all);
 
                 this.selecting = false;
                 this.tasksStore.clearSelection();
             },
             del()
             {
-                this.tasksStore.tasks
+                this.tasksStore.all
                 .filter(task => this.tasksStore.selected.includes(task._id))
                 .forEach(task =>
                 {

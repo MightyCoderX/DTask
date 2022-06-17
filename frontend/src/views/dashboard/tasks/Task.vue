@@ -30,7 +30,8 @@
     import DeleteButton from '../../../components/tasks/DeleteButton.vue';
     import EditButton from '../../../components/tasks/EditButton.vue';
     import API from '../../../config/API';
-    import store, {tryFetchJson} from '../../../store';
+    import store from '../../../store';
+    import { tryFetchJson } from '../../../utils/http';
     import TaskText from './TaskText.vue';
     
     export default {
@@ -69,6 +70,11 @@
         {
             this.currentText = this.task.text;
         },
+        updated()
+        {
+            if(this.editing) return;
+            this.currentText = this.task.text;
+        },
         methods:
         {
             expand()
@@ -87,6 +93,12 @@
                 setTimeout(() =>
                 {
                     txtInput.focus();
+                    const range = document.createRange();
+                    const selection = window.getSelection();
+                    range.selectNodeContents(txtInput);
+                    range.collapse(false);
+                    selection.removeAllRanges();
+                    selection.addRange(range);
                 }, 0);
                 
                 this.editing = true;
@@ -101,8 +113,13 @@
                     txtInput.removeEventListener('keydown', pressEnter);
                     txtInput.removeEventListener('blur', edited);
 
+                    if(!this.currentText.trim())
+                    {
+                        this.currentText = prevText;
+                        return;
+                    }
+
                     if(prevText.trim() === this.currentText.trim()) return;
-                    console.log({ prevText, currentText: this.currentText});
 
                     console.log('Edited ' + this.task._id);
 
@@ -170,7 +187,6 @@
 
     .text
     {
-        background-color: inherit;
         color: #ddd;
         border: 0.15em solid var(--accent-color);
         padding: 0.5em;
@@ -187,18 +203,23 @@
         white-space: pre;
     }
 
+    .task.expanded .text,
+    .task.editing .text
+    {
+        position: absolute;
+        white-space: initial;
+        background-color: inherit;
+        z-index: 2;
+    }
+
     .task.expanded .text
     {
-        white-space: initial;
         overflow-y: auto;
-        position: absolute;
     }
 
     .task.editing .text
     {
-        white-space: initial;
         resize: vertical;
-        position: absolute;
     }
 
     :not(.task.editing) .text
