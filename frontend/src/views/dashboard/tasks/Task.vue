@@ -29,11 +29,9 @@
     import CompleteButton from '../../../components/tasks/CompleteButton.vue';
     import DeleteButton from '../../../components/tasks/DeleteButton.vue';
     import EditButton from '../../../components/tasks/EditButton.vue';
-    import API from '../../../config/API';
     import store from '../../../store';
-    import { tryFetchJson } from '../../../utils/http';
     import TaskText from './TaskText.vue';
-    
+        
     export default {
         props:
         {
@@ -103,7 +101,7 @@
                 
                 this.editing = true;
 
-                const edited = () =>
+                const edited = async () =>
                 {
                     this.editing = false;
 
@@ -121,19 +119,9 @@
 
                     if(prevText.trim() === this.currentText.trim()) return;
 
-                    console.log('Edited ' + this.task._id);
+                    store.tasks.edit(this.task, this.currentText.trim());
 
-                    tryFetchJson(`${API.TASKS}/${this.task._id}`, {
-                        headers:
-                        {
-                            'Authorization': 'Bearer ' + store.user.getToken()
-                        },
-                        method: 'PUT',
-                        body:
-                        {
-                            text: this.currentText.trim()
-                        }
-                    });
+                    this.$emit('edited');
                 }
 
                 const pressEnter = e =>
@@ -194,9 +182,6 @@
         outline: none;
         font-size: 1rem;
         width: 100%;
-        align-self: stretch;
-        height: 100%;
-        min-height: 3rem;
         max-height: inherit;
         overflow: hidden;
         text-overflow: ellipsis;
@@ -210,6 +195,9 @@
         white-space: initial;
         background-color: inherit;
         z-index: 2;
+        align-self: stretch;
+        min-height: 3rem;
+        height: 100%;
     }
 
     .task.expanded .text

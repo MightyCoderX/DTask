@@ -47,6 +47,7 @@
                 completed
                 :show-select="selecting"
                 :show-controls="!selecting"
+                @edited="syncTasks"
             />
             <p class="placeholder" v-if="!tasksStore.completed?.length">You've not completed any task yet!</p>
         </NamedList>
@@ -131,17 +132,17 @@
 
                 this.selecting = false;
                 this.tasksStore.clearSelection();
+            },
+            //TODO: Fix this not updating an edited task (event line 50)
+            async syncTasks()
+            {
+                await this.tasksStore.getAll();
             }
         },
         async created()
         {
-            const syncTasks = async () =>
-            {
-                await this.tasksStore.getAll();
-            }
-
-            await syncTasks();
-            this.syncInterval = setInterval(syncTasks, 5000);
+            await this.syncTasks();
+            this.syncInterval = setInterval(this.syncTasks, 3000);
         },
         unmounted()
         {

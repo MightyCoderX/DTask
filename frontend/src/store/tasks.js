@@ -81,6 +81,25 @@ export default {
         this.get(task._id).completed = data.completed;
         this.update();
     },
+    async edit(task, newText)
+    {
+        const data = await tryFetchJson(`${API.TASKS}/${task._id}`, {
+            headers:
+            {
+                'Authorization': 'Bearer ' + user.getToken()
+            },
+            method: 'PUT',
+            body:
+            {
+                text: newText
+            }
+        });
+
+        if(!data) return;
+
+        this.get(task._id).text = data.text;
+        this.update();
+    },
     async delete(task)
     {
         const data = await tryFetchJson(`${API.TASKS}/${task._id}`, {

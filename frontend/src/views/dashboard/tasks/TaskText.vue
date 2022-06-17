@@ -1,5 +1,5 @@
 <template>
-    <div class="text" @keydown="updateValue" ref="text">
+    <div class="text" @keydown="updateValue">
         {{ value }}
     </div>
 </template>
