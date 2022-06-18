@@ -35,7 +35,7 @@
             async login(e)
             {
                 await store.user.login(new FormData(e.target));
-                this.$router.push({ name: 'Dashboard' });
+                this.$router.replace({ name: 'Dashboard', force: true });
             }
         }
     }

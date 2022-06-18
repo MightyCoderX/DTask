@@ -16,12 +16,18 @@
         
         <NamedList listTitle="To Do">
             <div class="new-task">
-                <FormField ref="newTaskInput" label="Text" :input-options="{
-                    type: 'text',
-                    autocomplete: 'off',
-                    name: 'text',
-                    required: true
-                }" v-model="text" @keyup.enter="createTask"/>
+                <FormField 
+                    label="Text" 
+                    :input-options="{
+                        type: 'text',
+                        autocomplete: 'off',
+                        name: 'text',
+                        required: true
+                    }"
+                    v-model="text"
+                    @keyup.enter="createTask"
+                    inputFontSize="1rem"
+                />
                 
                 <IconButton class="add-task" @click="createTask" icon-name="add" />
             </div>
@@ -30,7 +36,7 @@
                 v-else 
                 v-for="task of tasksStore.notCompleted" 
                 :key="task._id" 
-                :task="task"
+                :taskId="task._id"
                 :show-select="selecting"
                 :show-controls="!selecting"
             />
@@ -43,11 +49,10 @@
             <Task 
                 v-for="task of tasksStore.completed" 
                 :key="task._id" 
-                :task="task" 
+                :taskId="task._id" 
                 completed
                 :show-select="selecting"
                 :show-controls="!selecting"
-                @edited="syncTasks"
             />
             <p class="placeholder" v-if="!tasksStore.completed?.length">You've not completed any task yet!</p>
         </NamedList>
@@ -105,7 +110,7 @@
             {
                 this.tasksStore.create({text: this.text});
 
-                this.$refs.newTaskInput.value = '';
+                this.text = '';
             },
             complete()
             {
@@ -133,7 +138,6 @@
                 this.selecting = false;
                 this.tasksStore.clearSelection();
             },
-            //TODO: Fix this not updating an edited task (event line 50)
             async syncTasks()
             {
                 await this.tasksStore.getAll();
@@ -142,11 +146,12 @@
         async created()
         {
             await this.syncTasks();
-            this.syncInterval = setInterval(this.syncTasks, 3000);
+            store.syncInterval = setInterval(this.syncTasks, 3000);
         },
         unmounted()
         {
-            clearInterval(this.syncInterval);
+            console.log('Clearing interval');
+            clearInterval(store.syncInterval);
         }
     }
 </script>
@@ -279,11 +284,6 @@
     .new-task .form-field
     {
         flex: 10 0 12em;
-    }
-
-    .new-task .form-field .input
-    {
-        color: red;
     }
 
     .new-task .add-task

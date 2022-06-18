@@ -50,11 +50,19 @@ const router = createRouter({
         {
             path: '/login',
             name: 'Login',
+            meta:
+            {
+                hideIfAuth: true
+            },
             component: () => import('@/views/LoginView.vue')
         },
         {
             path: '/register',
             name: 'Register',
+            meta:
+            {
+                hideIfAuth: true
+            },
             component: () => import('@/views/RegisterView.vue')
         },
         {
@@ -67,6 +75,8 @@ const router = createRouter({
 
 router.beforeEach((to, from, next) =>
 {
+    document.title = 'DTask - ' + to.name;
+
     if(to.matched.some(record => record.meta.protected))
     {
         if(!store.user.authenticated && !localStorage.getItem('token'))
@@ -76,6 +86,15 @@ router.beforeEach((to, from, next) =>
             return;
         }
     }
+
+    if(to.matched.some(record => record.meta.hideIfAuth))
+    {
+        if(store.user.authenticated && localStorage.getItem('token'))
+        {
+            next(from);
+        }
+    }
+
     next();
 });
 

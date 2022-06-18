@@ -62,6 +62,7 @@ export default {
     },
     async complete(task)
     {
+        this.get(task._id).completed = true;
         if(task.completed === true) return;
         const data = await tryFetchJson(`${API.TASKS}/${task._id}`, {
             headers:
@@ -76,14 +77,14 @@ export default {
         });
 
         console.log('Completed task:', task._id, data);
-        if(!data) return;
         
-        this.get(task._id).completed = data.completed;
         this.update();
     },
     async edit(task, newText)
     {
-        const data = await tryFetchJson(`${API.TASKS}/${task._id}`, {
+        this.get(task._id).text = newText;
+        
+        await tryFetchJson(`${API.TASKS}/${task._id}`, {
             headers:
             {
                 'Authorization': 'Bearer ' + user.getToken()
@@ -95,14 +96,14 @@ export default {
             }
         });
 
-        if(!data) return;
-
-        this.get(task._id).text = data.text;
         this.update();
     },
     async delete(task)
     {
-        const data = await tryFetchJson(`${API.TASKS}/${task._id}`, {
+        this.all = this.all.filter(t => t._id !== task._id);
+        this.update();
+
+        await tryFetchJson(`${API.TASKS}/${task._id}`, {
             headers:
             {
                 'Authorization': 'Bearer ' + user.getToken()
@@ -110,9 +111,6 @@ export default {
             method: 'DELETE'
         });
         
-        if(!data) return;
-        
-        this.all = this.all.filter(t => t._id !== data._id);
         this.update();
     },
     toggleSelect(id, value)

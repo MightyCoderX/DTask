@@ -1,6 +1,13 @@
 <template>
     <div class="form-field">
-        <input class="input" :="inputOptions" placeholder=" " v-model="value" v-bind="$attrs.onKeyup">
+        <input 
+            class="input" 
+            :="inputOptions" 
+            placeholder=" " 
+            v-model="value" 
+            v-bind="$attrs.onKeyup"
+            :style="'font-size:' + inputFontSize"
+        >
         <span class="label">{{ label }}</span>
     </div>
 </template>
@@ -11,7 +18,8 @@
         { 
             label: String, 
             inputOptions: Object,
-            modelValue: String
+            modelValue: String,
+            inputFontSize: String
         },
         computed:
         {
@@ -68,7 +76,7 @@
         color: #ddd;
         border: 0.15em solid #999;
         border-radius: 1em;
-        padding: 1em;
+        padding: 0.8em 0.8em;
         outline: none;
     }
 

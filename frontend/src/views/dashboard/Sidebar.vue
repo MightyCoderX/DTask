@@ -31,10 +31,10 @@
         },
         methods:
         {
-            logout(e)
+            logout()
             {
-                store.user.removeToken();
-                this.$router.push({ name: "Login" });
+                store.user.logout();
+                this.$router.push({ name: "Login", force: true, replace: true });
             }
         }
     }

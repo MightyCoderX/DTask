@@ -1,5 +1,7 @@
 import API from '../config/API';
 import { tryFetchJson } from '../utils/http';
+import stats from './stats';
+import tasks from './tasks';
 
 export default {
     token: '',
@@ -44,6 +46,18 @@ export default {
         if(!resData) return;
         
         this.setToken(resData.token);
+    },
+    logout()
+    {
+        this.removeToken();
+        this.info = null;
+        tasks.all = null;
+        tasks.completed = null;
+        tasks.notCompleted = null;
+        stats.alltime = null;
+        stats.daily = null;
+        stats.weekly = null;
+        stats.monthly = null;
     },
     async getInfo()
     {

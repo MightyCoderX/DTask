@@ -11,6 +11,7 @@ const store = reactive(
 {
     isMobile: widthMediaQuery.matches,
     sidebarShown: true,
+    syncInterval: 0,
     user,
     tasks,
     stats

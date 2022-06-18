@@ -50,7 +50,7 @@
             register(e)
             {
                 store.user.register(new FormData(e.target));
-                this.$router.push({ name: 'Dashboard' });
+                this.$router.replace({ name: 'Dashboard', force: true });
             }
         }
     }

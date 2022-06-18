@@ -14,7 +14,11 @@
             contenteditable=""
             ref="textInput"
         />
-        <time class="created-date" :title="dateCreated.toDateString() + ' ' + dateCreated.toLocaleTimeString()">{{ dateCreated.toLocaleDateString() }}</time>
+        <time class="created-date" 
+            :title="'Created' + dateCreated.toDateString() + ' ' + dateCreated.toLocaleTimeString()"
+            :datetime="dateCreated">
+            {{ dateCreated.toLocaleDateString() }}
+        </time>
         <div class="buttons" v-if="showControls">
             <EditButton @click="edit" v-if="!completed" title="Edit text"/>
             <CompleteButton @click="complete" v-if="!completed" title="Complete task"/>
@@ -35,7 +39,7 @@
     export default {
         props:
         {
-            task: Object,
+            taskId: String,
             completed: Boolean,
             showControls: Boolean,
             showSelect: Boolean
@@ -45,9 +49,10 @@
             return {
                 editing: false,
                 currentText: '',
-                dateCreated: new Date(this.task.createdAt),
+                dateCreated: new Date(0),
                 isMobile: store.isMobile,
-                expanded: false
+                expanded: false,
+                task: {}
             }
         },
         computed:
@@ -66,7 +71,9 @@
         },
         created()
         {
+            this.task = store.tasks.get(this.taskId);
             this.currentText = this.task.text;
+            this.dateCreated = new Date(this.task.createdAt);
         },
         updated()
         {
@@ -119,15 +126,13 @@
 
                     if(prevText.trim() === this.currentText.trim()) return;
 
-                    store.tasks.edit(this.task, this.currentText.trim());
-
-                    this.$emit('edited');
+                    this.task.text = this.currentText.trim();
+                    await store.tasks.edit(this.task, this.currentText.trim());
                 }
 
                 const pressEnter = e =>
                 {
                     if(e.key !== 'Enter') return;
-                    
                     edited(e);
                 }
 
